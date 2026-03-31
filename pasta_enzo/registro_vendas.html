@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Vendas</title>
+  <style>
+    body {
+      font-family: Arial;
+      margin: 20px;
+    }
+
+    input, button {
+      margin: 5px;
+      padding: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Registro de Venda</h2>
+
+<input type="text" id="cliente" placeholder="Cliente">
+
+<h4>Adicionar Produto</h4>
+<input type="text" id="produto" placeholder="Produto">
+<input type="number" id="quantidade" placeholder="Quantidade">
+<input type="number" id="preco" placeholder="Preço Unitário">
+<button onclick="addProduto()">Adicionar</button>
+
+<ul id="listaProdutos"></ul>
+
+<h3 id="totalVenda">Total da Venda: R$ 0.00</h3>
+
+<button onclick="salvarVenda()">Salvar Venda</button>
+
+<hr>
+
+<h2>Vendas Registradas</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Cliente</th>
+      <th>Total</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody id="tabelaVendas"></tbody>
+</table>
+
+<script>
+let vendas = [];
+let produtosTemp = [];
+let editandoId = null;
+
+function addProduto() {
+  const nome = document.getElementById("produto").value;
+  const qtd = parseInt(document.getElementById("quantidade").value);
+  const preco = parseFloat(document.getElementById("preco").value);
+
+  if (!nome || !qtd || !preco) {
+    return alert("Preencha todos os campos do produto");
+  }
+
+  const total = qtd * preco;
+
+  produtosTemp.push({ nome, qtd, preco, total });
+
+  renderProdutosTemp();
+  atualizarTotal();
+
+  document.getElementById("produto").value = "";
+  document.getElementById("quantidade").value = "";
+  document.getElementById("preco").value = "";
+}
+
+function renderProdutosTemp() {
+  const lista = document.getElementById("listaProdutos");
+  lista.innerHTML = "";
+
+  produtosTemp.forEach(p => {
+    lista.innerHTML += `<li>${p.nome} - ${p.qtd} x R$ ${p.preco.toFixed(2)} = R$ ${p.total.toFixed(2)}</li>`;
+  });
+}
+
+function atualizarTotal() {
+  let total = 0;
+  produtosTemp.forEach(p => total += p.total);
+
+  document.getElementById("totalVenda").innerText =
+    "Total da Venda: R$ " + total.toFixed(2);
+}
+
+function salvarVenda() {
+  const cliente = document.getElementById("cliente").value;
+
+  if (!cliente || produtosTemp.length === 0) {
+    return alert("Preencha cliente e adicione produtos");
+  }
+
+  let total = 0;
+  produtosTemp.forEach(p => total += p.total);
+
+  if (editandoId !== null) {
+    const venda = vendas.find(v => v.id === editandoId);
+    venda.cliente = cliente;
+    venda.produtos = [...produtosTemp];
+    venda.total = total;
+    editandoId = null;
+  } else {
+    vendas.push({
+      id: Date.now(),
+      cliente,
+      produtos: [...produtosTemp],
+      total
+    });
+  }
+
+  limparFormulario();
+  renderTabela();
+}
+
+function renderTabela() {
+  const tabela = document.getElementById("tabelaVendas");
+  tabela.innerHTML = "";
+
+  vendas.forEach(v => {
+    tabela.innerHTML += `
+      <tr>
+        <td>${v.id}</td>
+        <td>${v.cliente}</td>
+        <td>R$ ${v.total.toFixed(2)}</td>
+        <td>
+          <button onclick="detalhes(${v.id})">Detalhes</button>
+          <button onclick="editar(${v.id})">Editar</button>
+          <button onclick="deletar(${v.id})">Excluir</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+function detalhes(id) {
+  const venda = vendas.find(v => v.id === id);
+
+  let texto = `Cliente: ${venda.cliente}\nTotal: R$ ${venda.total.toFixed(2)}\nProdutos:\n`;
+
+  venda.produtos.forEach(p => {
+    texto += `- ${p.nome} (${p.qtd} x R$ ${p.preco})\n`;
+  });
+
+  alert(texto);
+}
+
+function editar(id) {
+  const venda = vendas.find(v => v.id === id);
+
+  document.getElementById("cliente").value = venda.cliente;
+  produtosTemp = [...venda.produtos];
+  editandoId = id;
+
+  renderProdutosTemp();
+  atualizarTotal();
+}
+
+function deletar(id) {
+  vendas = vendas.filter(v => v.id !== id);
+  renderTabela();
+}
+
+function limparFormulario() {
+  document.getElementById("cliente").value = "";
+  produtosTemp = [];
+  atualizarTotal();
+  renderProdutosTemp();
+}
+</script>
+
+</body>
+</html>
