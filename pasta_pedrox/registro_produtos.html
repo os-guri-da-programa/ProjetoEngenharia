@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>CRUD de Pedidos</title>
+  <style>
+    body {
+      font-family: Arial;
+      margin: 20px;
+    }
+    input, button {
+      margin: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Cadastro de Pedido</h2>
+
+<input type="text" id="cliente" placeholder="Nome do Cliente">
+
+<h4>Adicionar Produto</h4>
+<input type="text" id="produto" placeholder="Produto">
+<input type="number" id="quantidade" placeholder="Quantidade">
+<button onclick="addProduto()">Adicionar Produto</button>
+
+<ul id="listaProdutos"></ul>
+
+<button onclick="salvarPedido()">Salvar Pedido</button>
+
+<hr>
+
+<h2>Pedidos</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Cliente</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody id="tabelaPedidos"></tbody>
+</table>
+
+<script>
+let pedidos = [];
+let produtosTemp = [];
+let editandoId = null;
+
+function addProduto() {
+  const nome = document.getElementById("produto").value;
+  const qtd = document.getElementById("quantidade").value;
+
+  if (!nome || !qtd) return alert("Preencha produto e quantidade");
+
+  produtosTemp.push({ nome, qtd });
+
+  renderProdutosTemp();
+
+  document.getElementById("produto").value = "";
+  document.getElementById("quantidade").value = "";
+}
+
+function renderProdutosTemp() {
+  const lista = document.getElementById("listaProdutos");
+  lista.innerHTML = "";
+
+  produtosTemp.forEach((p, index) => {
+    lista.innerHTML += `<li>${p.nome} - ${p.qtd}</li>`;
+  });
+}
+
+function salvarPedido() {
+  const cliente = document.getElementById("cliente").value;
+
+  if (!cliente || produtosTemp.length === 0) {
+    return alert("Preencha cliente e adicione produtos");
+  }
+
+  if (editandoId !== null) {
+    const pedido = pedidos.find(p => p.id === editandoId);
+    pedido.cliente = cliente;
+    pedido.produtos = [...produtosTemp];
+    editandoId = null;
+  } else {
+    pedidos.push({
+      id: Date.now(),
+      cliente,
+      produtos: [...produtosTemp]
+    });
+  }
+
+  limparFormulario();
+  renderTabela();
+}
+
+function renderTabela() {
+  const tabela = document.getElementById("tabelaPedidos");
+  tabela.innerHTML = "";
+
+  pedidos.forEach(p => {
+    tabela.innerHTML += `
+      <tr>
+        <td>${p.id}</td>
+        <td>${p.cliente}</td>
+        <td>
+          <button onclick="detalhes(${p.id})">Detalhes</button>
+          <button onclick="editar(${p.id})">Editar</button>
+          <button onclick="deletar(${p.id})">Deletar</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+function detalhes(id) {
+  const pedido = pedidos.find(p => p.id === id);
+  let texto = `Cliente: ${pedido.cliente}\nProdutos:\n`;
+
+  pedido.produtos.forEach(p => {
+    texto += `- ${p.nome} (${p.qtd})\n`;
+  });
+
+  alert(texto);
+}
+
+function editar(id) {
+  const pedido = pedidos.find(p => p.id === id);
+
+  document.getElementById("cliente").value = pedido.cliente;
+  produtosTemp = [...pedido.produtos];
+  editandoId = id;
+
+  renderProdutosTemp();
+}
+
+function deletar(id) {
+  pedidos = pedidos.filter(p => p.id !== id);
+  renderTabela();
+}
+
+function limparFormulario() {
+  document.getElementById("cliente").value = "";
+  produtosTemp = [];
+  renderProdutosTemp();
+}
+</script>
+
+</body>
+</html>
