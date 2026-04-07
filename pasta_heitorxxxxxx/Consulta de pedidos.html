@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Consulta de Pedidos</title>
+<style>
+    body { font-family: Arial; margin: 20px; background: #f4f4f4; }
+    h2 { background: #222; color: #fff; padding: 10px; }
+    input, button, select { padding: 8px; margin: 5px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th, td { border: 1px solid #ccc; padding: 10px; }
+</style>
+</head>
+<body>
+
+<h2>Consulta de Pedidos</h2>
+
+<input type="text" id="buscaMesa" placeholder="Buscar por mesa ou cliente">
+<select id="filtroStatus">
+    <option value="todos">Todos</option>
+    <option value="aberto">Em aberto</option>
+    <option value="fechado">Fechado</option>
+</select>
+<button onclick="buscarPedidos()">Buscar</button>
+
+<table>
+    <thead>
+        <tr>
+            <th>Mesa/Cliente</th>
+            <th>Item</th>
+            <th>Valor</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody id="tabelaPedidos"></tbody>
+</table>
+
+<script>
+// DADOS MOCK (simulando sistema)
+let pedidos = [
+    { mesa: "1", item: "Pizza", valor: 50, status: "aberto" },
+    { mesa: "2", item: "Hamburguer", valor: 30, status: "fechado" },
+    { mesa: "1", item: "Refrigerante", valor: 10, status: "aberto" }
+];
+
+function buscarPedidos() {
+    let busca = document.getElementById("buscaMesa").value.toLowerCase();
+    let filtro = document.getElementById("filtroStatus").value;
+
+    let resultado = pedidos.filter(p => {
+        let matchBusca = p.mesa.toLowerCase().includes(busca);
+        let matchStatus = (filtro === "todos" || p.status === filtro);
+        return matchBusca && matchStatus;
+    });
+
+    atualizarTabela(resultado);
+}
+
+function atualizarTabela(lista) {
+    let tabela = document.getElementById("tabelaPedidos");
+    tabela.innerHTML = "";
+
+    let total = 0;
+
+    lista.forEach(p => {
+        total += p.valor;
+        tabela.innerHTML += `
+            <tr>
+                <td>${p.mesa}</td>
+                <td>${p.item}</td>
+                <td>R$ ${p.valor.toFixed(2)}</td>
+                <td>${p.status}</td>
+            </tr>
+        `;
+    });
+
+    tabela.innerHTML += `
+        <tr>
+            <td colspan="2"><strong>Total</strong></td>
+            <td colspan="2"><strong>R$ ${total.toFixed(2)}</strong></td>
+        </tr>
+    `;
+}
+
+// carregar todos ao abrir
+atualizarTabela(pedidos);
+</script>
+
+</body>
+</html>
