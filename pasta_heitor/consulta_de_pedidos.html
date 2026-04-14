@@ -3,13 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Consulta de Pedidos</title>
-<style>
-    body { font-family: Arial; margin: 20px; background: #f4f4f4; }
-    h2 { background: #222; color: #fff; padding: 10px; }
-    input, button, select { padding: 8px; margin: 5px; }
-    table { width: 100%; border-collapse: collapse; background: #fff; }
-    th, td { border: 1px solid #ccc; padding: 10px; }
-</style>
 </head>
 <body>
 
@@ -36,7 +29,7 @@
 </table>
 
 <script>
-// DADOS MOCK (simulando sistema)
+
 let pedidos = [
     { mesa: "1", item: "Pizza", valor: 50, status: "aberto" },
     { mesa: "2", item: "Hamburguer", valor: 30, status: "fechado" },
@@ -82,7 +75,7 @@ function atualizarTabela(lista) {
     `;
 }
 
-// carregar todos ao abrir
+
 atualizarTabela(pedidos);
 </script>
 
