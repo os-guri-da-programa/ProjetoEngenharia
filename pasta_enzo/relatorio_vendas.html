@@ -1,17 +1,35 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Relatório de Vendas</title>
+  <meta charset="UTF-8">
+  <title>Relatório de Vendas</title>
+  <style>
+    body {
+      font-family: Arial;
+      margin: 20px;
+    }
 
-<style>
-body { font-family: Arial; margin: 20px; }
-input, button { margin: 5px; padding: 6px; }
-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-h2 { margin-top: 30px; }
-</style>
+    input, button {
+      margin: 5px;
+      padding: 6px;
+    }
 
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-top: 30px;
+    }
+  </style>
 </head>
 <body>
 
@@ -25,54 +43,51 @@ até
 <button onclick="limparFiltro()">Limpar</button>
 
 <h3 id="totalGeral">Total Geral: R$ 0.00</h3>
-<h3 id="lucroTotal">Lucro Total: R$ 0.00</h3>
 
 <table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Cliente</th>
-<th>Data</th>
-<th>Total</th>
-<th>Lucro</th>
-</tr>
-</thead>
-<tbody id="tabelaRelatorio"></tbody>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Cliente</th>
+      <th>Data</th>
+      <th>Total</th>
+    </tr>
+  </thead>
+  <tbody id="tabelaRelatorio"></tbody>
 </table>
 
 <h2>Resumo por Produto</h2>
 
 <table>
-<thead>
-<tr>
-<th>Produto</th>
-<th>Quantidade Vendida</th>
-<th>Lucro Gerado</th>
-</tr>
-</thead>
-<tbody id="resumoProdutos"></tbody>
+  <thead>
+    <tr>
+      <th>Produto</th>
+      <th>Quantidade Vendida</th>
+    </tr>
+  </thead>
+  <tbody id="resumoProdutos"></tbody>
 </table>
 
 <script>
-
-// Agora cada produto tem custo (pra calcular lucro)
 let vendas = [
   {
     id: 1,
     cliente: "João",
     data: "2026-03-30",
+    total: 50,
     produtos: [
-      { nome: "Hambúrguer", qtd: 2, preco: 25, custo: 15 },
-      { nome: "Refri", qtd: 1, preco: 5, custo: 2 }
+      { nome: "Hambúrguer", qtd: 2 },
+      { nome: "Refri", qtd: 1 }
     ]
   },
   {
     id: 2,
     cliente: "Maria",
     data: "2026-03-31",
+    total: 30,
     produtos: [
-      { nome: "Pizza", qtd: 1, preco: 30, custo: 18 },
-      { nome: "Refri", qtd: 2, preco: 5, custo: 2 }
+      { nome: "Pizza", qtd: 1 },
+      { nome: "Refri", qtd: 2 }
     ]
   }
 ];
@@ -85,53 +100,36 @@ function render(vendasFiltradas) {
   resumo.innerHTML = "";
 
   let totalGeral = 0;
-  let lucroTotal = 0;
-
   let mapaProdutos = {};
 
   vendasFiltradas.forEach(v => {
-
-    let totalVenda = 0;
-    let lucroVenda = 0;
-
-    v.produtos.forEach(p => {
-      totalVenda += p.preco * p.qtd;
-      lucroVenda += (p.preco - p.custo) * p.qtd;
-
-      if (!mapaProdutos[p.nome]) {
-        mapaProdutos[p.nome] = { qtd: 0, lucro: 0 };
-      }
-
-      mapaProdutos[p.nome].qtd += p.qtd;
-      mapaProdutos[p.nome].lucro += (p.preco - p.custo) * p.qtd;
-    });
-
-    totalGeral += totalVenda;
-    lucroTotal += lucroVenda;
+    totalGeral += v.total;
 
     tabela.innerHTML += `
       <tr>
         <td>${v.id}</td>
         <td>${v.cliente}</td>
         <td>${v.data}</td>
-        <td>R$ ${totalVenda.toFixed(2)}</td>
-        <td>R$ ${lucroVenda.toFixed(2)}</td>
+        <td>R$ ${v.total.toFixed(2)}</td>
       </tr>
     `;
+
+    v.produtos.forEach(p => {
+      if (!mapaProdutos[p.nome]) {
+        mapaProdutos[p.nome] = 0;
+      }
+      mapaProdutos[p.nome] += p.qtd;
+    });
   });
 
   document.getElementById("totalGeral").innerText =
     "Total Geral: R$ " + totalGeral.toFixed(2);
 
-  document.getElementById("lucroTotal").innerText =
-    "Lucro Total: R$ " + lucroTotal.toFixed(2);
-
   for (let produto in mapaProdutos) {
     resumo.innerHTML += `
       <tr>
         <td>${produto}</td>
-        <td>${mapaProdutos[produto].qtd}</td>
-        <td>R$ ${mapaProdutos[produto].lucro.toFixed(2)}</td>
+        <td>${mapaProdutos[produto]}</td>
       </tr>
     `;
   }
@@ -157,7 +155,6 @@ function limparFiltro() {
 }
 
 render(vendas);
-
 </script>
 
 </body>
