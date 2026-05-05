@@ -2,16 +2,60 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Registro de entrada</title>
+  <title>Registro de Entrada de Produtos</title>
   <style>
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       margin: 20px;
     }
 
-    input, button {
+    h1, h2 {
+      margin-top: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+
+    input, button, select {
+      padding: 8px 10px;
+      border: 1px solid #000;
+      font-size: 14px;
       margin: 5px;
-      padding: 6px;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    ul#listaProdutos {
+      list-style: none;
+      padding: 0;
+      margin: 15px 0;
+    }
+
+    ul#listaProdutos li {
+      padding: 10px;
+      margin: 5px 0;
+      border: 1px solid #000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .remove-btn {
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+
+    .total-info {
+      padding: 10px;
+      border: 1px solid #000;
+      margin: 15px 0;
     }
 
     table {
@@ -21,57 +65,103 @@
     }
 
     th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: center;
+      border: 1px solid #000;
+      padding: 12px;
+      text-align: left;
     }
 
-    h2 {
-      margin-top: 30px;
+    .action-buttons {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .action-buttons button {
+      padding: 4px 8px;
+      font-size: 12px;
+      margin: 0;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .form-row input {
+      flex: 1;
+      min-width: 150px;
     }
   </style>
 </head>
 <body>
 
-<h2>Registro de entrada</h2>
+<h1>Registro de Entrada de Produtos</h1>
 
-<input type="text" id="fornecedor" placeholder="fornecedor">
+  <h2>Dados da Entrada</h2>
+  
+  <div class="form-group">
+    <label for="fornecedor">Fornecedor:</label>
+    <input type="text" id="fornecedor" placeholder="Nome do fornecedor" style="flex: 1; min-width: 200px;">
+    
+    <label for="dataEntrada">Data da Entrada:</label>
+    <input type="date" id="dataEntrada" style="min-width: 150px;">
+  </div>
 
-<h4>Registrar produto</h4>
-<input type="text" id="produto" placeholder="Produto">
-<input type="number" id="quantidade" placeholder="Quantidade">
-<input type="number" id="preco" placeholder="Preço Unitário">
-<button onclick="addProduto()">registrar produto</button>
+  <h2>Adicionar Produtos</h2>
+  
+  <div class="form-row">
+    <input type="text" id="produto" placeholder="Nome do Produto" style="flex: 2;">
+    <input type="number" id="quantidade" placeholder="Quantidade" min="1" style="flex: 1;">
+    <input type="number" id="precoUnitario" placeholder="Preço Unitário" min="0.01" step="0.01" style="flex: 1;">
+    <button onclick="adicionarProduto()" style="margin: 0;">+ Adicionar</button>
+  </div>
 
-<ul id="listaProdutos"></ul>
+  <h2>Produtos da Entrada</h2>
+  
+  <ul id="listaProdutos"></ul>
 
-<h2>Produtos registrados</h2>
+  <div id="totalInfo" class="total-info" style="display: none;"></div>
 
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Fornecedor</th>
-      <th>Total</th>
-      <th>Preço</th>
-      <th>Ações</th>
-    </tr>
-  </thead>
-  <tbody id="tabelaVendas"></tbody>
-</table>
+  <div class="form-group">
+    <button onclick="salvarEntrada()">Salvar Entrada</button>
+    <button onclick="limparFormulario()">Limpar</button>
+  </div>
 
+  <h2>Entradas Registradas</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Fornecedor</th>
+        <th>Data da Entrada</th>
+        <th>Quantidade Total</th>
+        <th>Valor Total</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="tabelaEntradas"></tbody>
+  </table>
+
+<script src="mock_entradas_bar.js"></script>
 <script>
-let vendas = [];
+let entradas = [];
 let produtosTemp = [];
 let editandoId = null;
 
-function addProduto() {
-  const nome = document.getElementById("produto").value;
-  const qtd = parseInt(document.getElementById("quantidade").value);
-  const preco = parseFloat(document.getElementById("preco").value);
+if (typeof mockEntradasBar !== 'undefined' && Array.isArray(mockEntradasBar)) {
+  entradas = [...mockEntradasBar];
+  renderTabela();
+}
 
-  if (!nome || !qtd || !preco) {
-    return alert("Preencha todos os campos do produto");
+function adicionarProduto() {
+  const nome = document.getElementById("produto").value.trim();
+  const qtd = parseInt(document.getElementById("quantidade").value);
+  const preco = parseFloat(document.getElementById("precoUnitario").value);
+
+  if (!nome || !qtd || !preco || qtd <= 0 || preco <= 0) {
+    return alert("Preencha todos os campos do produto com valores válidos");
   }
 
   const total = qtd * preco;
@@ -83,48 +173,83 @@ function addProduto() {
 
   document.getElementById("produto").value = "";
   document.getElementById("quantidade").value = "";
-  document.getElementById("preco").value = "";
+  document.getElementById("precoUnitario").value = "";
+  document.getElementById("produto").focus();
 }
 
 function renderProdutosTemp() {
   const lista = document.getElementById("listaProdutos");
   lista.innerHTML = "";
 
-  produtosTemp.forEach(p => {
-    lista.innerHTML += `<li>${p.nome} - ${p.qtd} x R$ ${p.preco.toFixed(2)} = R$ ${p.total.toFixed(2)}</li>`;
+  produtosTemp.forEach((p, index) => {
+    lista.innerHTML += `
+      <li>
+        <div>
+          <strong>${p.nome}</strong> - ${p.qtd} un. × R$ ${p.preco.toFixed(2)} = <strong>R$ ${p.total.toFixed(2)}</strong>
+        </div>
+        <button class="remove-btn" onclick="removerProduto(${index})">Remover</button>
+      </li>
+    `;
   });
 }
 
-function atualizarTotal() {
-  let total = 0;
-  produtosTemp.forEach(p => total += p.total);
-
-  document.getElementById("totalVenda").innerText =
-    "Total da Venda: R$ " + total.toFixed(2);
+function removerProduto(index) {
+  produtosTemp.splice(index, 1);
+  renderProdutosTemp();
+  atualizarTotal();
 }
 
-function salvarVenda() {
-  const cliente = document.getElementById("cliente").value;
-
-  if (!cliente || produtosTemp.length === 0) {
-    return alert("Preencha cliente e adicione produtos");
+function atualizarTotal() {
+  const totalInfo = document.getElementById("totalInfo");
+  
+  if (produtosTemp.length === 0) {
+    totalInfo.style.display = "none";
+    return;
   }
 
-  let total = 0;
-  produtosTemp.forEach(p => total += p.total);
+  let totalQtd = 0;
+  let totalValor = 0;
+  
+  produtosTemp.forEach(p => {
+    totalQtd += p.qtd;
+    totalValor += p.total;
+  });
+
+  totalInfo.style.display = "block";
+  totalInfo.innerText = `Quantidade Total: ${totalQtd} un. | Valor Total: R$ ${totalValor.toFixed(2)}`;
+}
+
+function salvarEntrada() {
+  const fornecedor = document.getElementById("fornecedor").value.trim();
+  const dataEntrada = document.getElementById("dataEntrada").value;
+
+  if (!fornecedor || !dataEntrada || produtosTemp.length === 0) {
+    return alert("Preencha fornecedor, data da entrada e adicione produtos");
+  }
+
+  let totalQtd = 0;
+  let totalValor = 0;
+  produtosTemp.forEach(p => {
+    totalQtd += p.qtd;
+    totalValor += p.total;
+  });
 
   if (editandoId !== null) {
-    const venda = vendas.find(v => v.id === editandoId);
-    venda.cliente = cliente;
-    venda.produtos = [...produtosTemp];
-    venda.total = total;
+    const entrada = entradas.find(e => e.id === editandoId);
+    entrada.fornecedor = fornecedor;
+    entrada.dataEntrada = dataEntrada;
+    entrada.produtos = [...produtosTemp];
+    entrada.totalQtd = totalQtd;
+    entrada.totalValor = totalValor;
     editandoId = null;
   } else {
-    vendas.push({
+    entradas.push({
       id: Date.now(),
-      cliente,
+      fornecedor,
+      dataEntrada,
       produtos: [...produtosTemp],
-      total
+      totalQtd,
+      totalValor
     });
   }
 
@@ -133,59 +258,80 @@ function salvarVenda() {
 }
 
 function renderTabela() {
-  const tabela = document.getElementById("tabelaVendas");
+  const tabela = document.getElementById("tabelaEntradas");
   tabela.innerHTML = "";
 
-  vendas.forEach(v => {
+  entradas.forEach(e => {
     tabela.innerHTML += `
       <tr>
-        <td>${v.id}</td>
-        <td>${v.cliente}</td>
-        <td>R$ ${v.total.toFixed(2)}</td>
+        <td>${e.id}</td>
+        <td>${e.fornecedor}</td>
+        <td>${new Date(e.dataEntrada).toLocaleDateString('pt-BR')}</td>
+        <td>${e.totalQtd} un.</td>
+        <td>R$ ${e.totalValor.toFixed(2)}</td>
         <td>
-          <button onclick="detalhes(${v.id})">Detalhes</button>
-          <button onclick="editar(${v.id})">Editar</button>
-          <button onclick="deletar(${v.id})">Excluir</button>
+          <div class="action-buttons">
+            <button onclick="verDetalhes(${e.id})">Detalhes</button>
+            <button onclick="editarEntrada(${e.id})">Editar</button>
+            <button onclick="deletarEntrada(${e.id})">Excluir</button>
+          </div>
         </td>
       </tr>
     `;
   });
 }
 
-function detalhes(id) {
-  const venda = vendas.find(v => v.id === id);
+function verDetalhes(id) {
+  const entrada = entradas.find(e => e.id === id);
 
-  let texto = `Cliente: ${venda.cliente}\nTotal: R$ ${venda.total.toFixed(2)}\nProdutos:\n`;
+  let texto = `Fornecedor: ${entrada.fornecedor}\n`;
+  texto += `Data da Entrada: ${new Date(entrada.dataEntrada).toLocaleDateString('pt-BR')}\n`;
+  texto += `Quantidade Total: ${entrada.totalQtd} un.\n`;
+  texto += `Valor Total: R$ ${entrada.totalValor.toFixed(2)}\n\nProdutos:\n`;
 
-  venda.produtos.forEach(p => {
-    texto += `- ${p.nome} (${p.qtd} x R$ ${p.preco})\n`;
+  entrada.produtos.forEach(p => {
+    texto += `- ${p.nome}: ${p.qtd} un. × R$ ${p.preco.toFixed(2)} = R$ ${p.total.toFixed(2)}\n`;
   });
 
   alert(texto);
 }
 
-function editar(id) {
-  const venda = vendas.find(v => v.id === id);
+function editarEntrada(id) {
+  const entrada = entradas.find(e => e.id === id);
 
-  document.getElementById("cliente").value = venda.cliente;
-  produtosTemp = [...venda.produtos];
+  document.getElementById("fornecedor").value = entrada.fornecedor;
+  document.getElementById("dataEntrada").value = entrada.dataEntrada;
+  produtosTemp = JSON.parse(JSON.stringify(entrada.produtos));
   editandoId = id;
 
   renderProdutosTemp();
   atualizarTotal();
+  
+  window.scrollTo(0, 0);
+  document.getElementById("produto").focus();
 }
 
-function deletar(id) {
-  vendas = vendas.filter(v => v.id !== id);
-  renderTabela();
+function deletarEntrada(id) {
+  if (confirm("Tem certeza que deseja excluir esta entrada?")) {
+    entradas = entradas.filter(e => e.id !== id);
+    renderTabela();
+  }
 }
 
 function limparFormulario() {
-  document.getElementById("cliente").value = "";
+  document.getElementById("fornecedor").value = "";
+  document.getElementById("dataEntrada").value = "";
+  document.getElementById("produto").value = "";
+  document.getElementById("quantidade").value = "";
+  document.getElementById("precoUnitario").value = "";
   produtosTemp = [];
-  atualizarTotal();
+  editandoId = null;
   renderProdutosTemp();
+  atualizarTotal();
 }
+
+// Inicializar data de hoje
+document.getElementById("dataEntrada").valueAsDate = new Date();
 </script>
 
 </body>
