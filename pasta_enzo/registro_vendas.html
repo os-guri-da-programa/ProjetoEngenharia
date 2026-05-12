@@ -1,82 +1,205 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <title>Registro de Vendas</title>
+
+  <link rel="stylesheet" href="../pasta_fabiane/index.css">
+
   <style>
-    body {
-      font-family: Arial;
-      margin: 20px;
+      
+      select {
+        color: #333;
+      }
+
+      select:invalid {
+        color: #777;
+      }
+
+    .form-container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 6px;
+      margin-bottom: 25px;
+      border: 1px solid #ddd;
     }
 
-    input, button {
-      margin: 5px;
-      padding: 6px;
+    .form-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
+    .form-group input {
+      flex: 1;
+      min-width: 180px;
     }
 
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: center;
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
     }
 
-    h2 {
-      margin-top: 30px;
+    #listaProdutos {
+      list-style: none;
+      padding: 0;
+      margin: 15px 0;
+    }
+
+    #listaProdutos li {
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .total-box {
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      color: #2c3e50;
+    }
+
+    .empty-message {
+      margin-top: 15px;
+      color: #777;
     }
   </style>
 </head>
+
 <body>
 
-<h2>Registro de Venda</h2>
+<div class="dashboard-container">
 
-<input type="text" id="cliente" placeholder="Cliente">
+  <aside class="sidebar">
+    <div class="logo">
+      <h1>CRUD</h1>
+    </div>
 
-<h4>Adicionar Produto</h4>
-<input type="text" id="produto" placeholder="Produto">
-<input type="number" id="quantidade" placeholder="Quantidade">
-<input type="number" id="preco" placeholder="Preço Unitário">
-<button onclick="addProduto()">Adicionar</button>
+    <nav class="menu">
+      <section class="menu-group">
+        <h3>Cadastros</h3>
+        <ul>
+          <li><a href="../pasta_mateus/cadastro_clientes.html">Cadastro de Clientes</a></li>
+          <li><a href="../pasta_mateus/cadastro_produtos.html">Cadastro de Produtos</a></li>
+          <li><a href="../pasta_pedro/registro_produtos.html">Registro de Produtos</a></li>
+        </ul>
+      </section>
 
-<ul id="listaProdutos"></ul>
+      <section class="menu-group">
+        <h3>Estoque</h3>
+        <ul>
+          <li><a href="../pasta_davi/registro_de_entrada.html">Registro de Entrada</a></li>
+          <li><a href="../pasta_davi/relatorio.html">Consulta e Relatório</a></li>
+        </ul>
+      </section>
 
-<h3 id="totalVenda">Total da Venda: R$ 0.00</h3>
+      <section class="menu-group">
+        <h3>Pedidos</h3>
+        <ul>
+          <li><a href="../pasta_heitor/consulta_de_pedidos.html">Consulta de Pedidos</a></li>
+        </ul>
+      </section>
 
-<button onclick="salvarVenda()">Salvar Venda</button>
+      <section class="menu-group">
+        <h3>Vendas</h3>
+        <ul>
+          <li><a href="../pasta_enzo/registro_vendas.html">Registro de Vendas</a></li>
+          <li><a href="../pasta_enzo/relatorio_vendas.html">Relatório de Vendas</a></li>
+        </ul>
+      </section>
+    </nav>
+  </aside>
 
-<hr>
+  <main class="content">
 
-<h2>Vendas Registradas</h2>
+    <header class="content-header">
+      <h2>Registro de Vendas</h2>
+      <div class="user-info">Usuário: Admin</div>
+    </header>
 
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Cliente</th>
-      <th>Total</th>
-      <th>Ações</th>
-    </tr>
-  </thead>
-  <tbody id="tabelaVendas"></tbody>
-</table>
+    <section class="view-container">
+
+      <div class="form-container">
+        <h2>Nova Venda</h2>
+
+        <div class="form-group">
+          <select id="cliente" required></select>
+        </div>
+
+        <h3>Adicionar Produto</h3>
+
+        <div class="form-group">
+          <select id="produto" required></select>
+          <input type="number" id="quantidade" placeholder="Quantidade" min="1">
+          <input type="number" id="preco" placeholder="Preço Unitário" min="0.01" step="0.01">
+
+          <button onclick="addProduto()">Adicionar</button>
+        </div>
+
+        <ul id="listaProdutos"></ul>
+
+        <h3 id="totalVenda" class="total-box">
+          Total da Venda: R$ 0,00
+        </h3>
+
+        <div class="actions">
+          <button onclick="salvarVenda()">Salvar Venda</button>
+          <button onclick="limparFormulario()">Limpar</button>
+        </div>
+      </div>
+
+      <h2>Vendas Registradas</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Total</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+
+        <tbody id="tabelaVendas"></tbody>
+      </table>
+
+      <p id="mensagemVazia" class="empty-message"></p>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script src="mock_vendas.js"></script>
 
 <script>
-let vendas = [];
+let vendas = JSON.parse(localStorage.getItem("vendas")) || [];
 let produtosTemp = [];
 let editandoId = null;
 
+function formatarMoeda(valor) {
+  return Number(valor).toFixed(2).replace(".", ",");
+}
+
 function addProduto() {
-  const nome = document.getElementById("produto").value;
+  const nome = document.getElementById("produto").value.trim();
   const qtd = parseInt(document.getElementById("quantidade").value);
   const preco = parseFloat(document.getElementById("preco").value);
 
-  if (!nome || !qtd || !preco) {
-    return alert("Preencha todos os campos do produto");
+  if (!nome || isNaN(qtd) || isNaN(preco) || qtd <= 0 || preco <= 0) {
+    alert("Preencha todos os campos do produto corretamente.");
+    return;
   }
 
   const total = qtd * preco;
@@ -95,43 +218,75 @@ function renderProdutosTemp() {
   const lista = document.getElementById("listaProdutos");
   lista.innerHTML = "";
 
-  produtosTemp.forEach(p => {
-    lista.innerHTML += `<li>${p.nome} - ${p.qtd} x R$ ${p.preco.toFixed(2)} = R$ ${p.total.toFixed(2)}</li>`;
+  produtosTemp.forEach((p, index) => {
+    lista.innerHTML += `
+      <li>
+        <span>
+          <strong>${p.nome}</strong> - ${p.qtd} x R$ ${formatarMoeda(p.preco)}
+          = <strong>R$ ${formatarMoeda(p.total)}</strong>
+        </span>
+
+        <button onclick="removerProduto(${index})">
+          Remover
+        </button>
+      </li>
+    `;
   });
+}
+
+function removerProduto(index) {
+  produtosTemp.splice(index, 1);
+  renderProdutosTemp();
+  atualizarTotal();
 }
 
 function atualizarTotal() {
   let total = 0;
-  produtosTemp.forEach(p => total += p.total);
+
+  produtosTemp.forEach(p => {
+    total += p.total;
+  });
 
   document.getElementById("totalVenda").innerText =
-    "Total da Venda: R$ " + total.toFixed(2);
+    "Total da Venda: R$ " + formatarMoeda(total);
 }
 
 function salvarVenda() {
-  const cliente = document.getElementById("cliente").value;
+  const cliente = document.getElementById("cliente").value.trim();
 
   if (!cliente || produtosTemp.length === 0) {
-    return alert("Preencha cliente e adicione produtos");
+    alert("Preencha o cliente e adicione pelo menos um produto.");
+    return;
   }
 
   let total = 0;
-  produtosTemp.forEach(p => total += p.total);
+
+  produtosTemp.forEach(p => {
+    total += p.total;
+  });
 
   if (editandoId !== null) {
     const venda = vendas.find(v => v.id === editandoId);
+
     venda.cliente = cliente;
     venda.produtos = [...produtosTemp];
     venda.total = total;
+
     editandoId = null;
+
+    alert("Venda atualizada com sucesso!");
   } else {
     vendas.push({
-      id: Date.now(),
+      id: vendas.length + 1,
       cliente,
       produtos: [...produtosTemp],
       total
     });
+
+    alert("Venda registrada com sucesso!");
   }
+
+  localStorage.setItem("vendas", JSON.stringify(vendas));
 
   limparFormulario();
   renderTabela();
@@ -139,14 +294,23 @@ function salvarVenda() {
 
 function renderTabela() {
   const tabela = document.getElementById("tabelaVendas");
+  const mensagem = document.getElementById("mensagemVazia");
+
   tabela.innerHTML = "";
+
+  if (vendas.length === 0) {
+    mensagem.innerText = "Nenhuma venda registrada.";
+    return;
+  }
+
+  mensagem.innerText = "";
 
   vendas.forEach(v => {
     tabela.innerHTML += `
       <tr>
         <td>${v.id}</td>
         <td>${v.cliente}</td>
-        <td>R$ ${v.total.toFixed(2)}</td>
+        <td>R$ ${formatarMoeda(v.total)}</td>
         <td>
           <button onclick="detalhes(${v.id})">Detalhes</button>
           <button onclick="editar(${v.id})">Editar</button>
@@ -160,10 +324,12 @@ function renderTabela() {
 function detalhes(id) {
   const venda = vendas.find(v => v.id === id);
 
-  let texto = `Cliente: ${venda.cliente}\nTotal: R$ ${venda.total.toFixed(2)}\nProdutos:\n`;
+  let texto = `Cliente: ${venda.cliente}\n`;
+  texto += `Total: R$ ${formatarMoeda(venda.total)}\n\n`;
+  texto += "Produtos:\n";
 
   venda.produtos.forEach(p => {
-    texto += `- ${p.nome} (${p.qtd} x R$ ${p.preco})\n`;
+    texto += `- ${p.nome}: ${p.qtd} x R$ ${formatarMoeda(p.preco)} = R$ ${formatarMoeda(p.total)}\n`;
   });
 
   alert(texto);
@@ -173,24 +339,112 @@ function editar(id) {
   const venda = vendas.find(v => v.id === id);
 
   document.getElementById("cliente").value = venda.cliente;
-  produtosTemp = [...venda.produtos];
+  produtosTemp = JSON.parse(JSON.stringify(venda.produtos));
   editandoId = id;
 
   renderProdutosTemp();
   atualizarTotal();
+
+  window.scrollTo(0, 0);
 }
 
 function deletar(id) {
-  vendas = vendas.filter(v => v.id !== id);
-  renderTabela();
+  if (confirm("Deseja excluir esta venda?")) {
+    vendas = vendas.filter(v => v.id !== id);
+
+    localStorage.setItem("vendas", JSON.stringify(vendas));
+
+    renderTabela();
+
+    alert("Venda excluída com sucesso!");
+  }
 }
 
 function limparFormulario() {
   document.getElementById("cliente").value = "";
+  document.getElementById("produto").value = "";
+  document.getElementById("quantidade").value = "";
+  document.getElementById("preco").value = "";
+
   produtosTemp = [];
-  atualizarTotal();
+  editandoId = null;
+
   renderProdutosTemp();
+  atualizarTotal();
 }
+
+function carregarClientes() {
+
+  const clientes =
+    JSON.parse(localStorage.getItem("clientes")) || [];
+
+  const select =
+    document.getElementById("cliente");
+
+  select.innerHTML =
+  `<option value="" disabled selected>
+    Selecione um cliente
+  </option>`;
+
+  clientes.forEach(cliente => {
+
+    select.innerHTML += `
+      <option value="${cliente.nome}">
+        ${cliente.nome}
+      </option>
+    `;
+
+  });
+
+}
+
+function carregarProdutos() {
+
+  const produtos =
+    JSON.parse(localStorage.getItem("produtos")) || [];
+
+  const select =
+    document.getElementById("produto");
+
+  select.innerHTML =
+  `<option value="" disabled selected>
+    Selecione um produto
+  </option>`;
+
+  produtos.forEach(produto => {
+
+    select.innerHTML += `
+      <option
+        value="${produto.nome}"
+        data-preco="${produto.venda}"
+      >
+        ${produto.nome}
+      </option>
+    `;
+
+  });
+
+}
+
+document
+  .getElementById("produto")
+
+  .addEventListener("change", function() {
+
+    const option =
+      this.options[this.selectedIndex];
+
+    document.getElementById("preco").value =
+      option.getAttribute("data-preco") || "";
+
+});
+
+carregarClientes();
+
+carregarProdutos();
+
+renderTabela();
+
 </script>
 
 </body>

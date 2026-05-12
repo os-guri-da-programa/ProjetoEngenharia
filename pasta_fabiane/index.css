@@ -1,6 +1,4 @@
-/*css*/
-
-/* Reset básico para remover margens padrão */
+/* RESET */
 * {
     margin: 0;
     padding: 0;
@@ -8,25 +6,36 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+
+/* BODY */
 body {
     background-color: #f4f7f6;
 }
 
-/* Container principal que segura o Menu e o Conteúdo */
+
+/* CONTAINER PRINCIPAL */
 .dashboard-container {
     display: flex;
     min-height: 100vh;
 }
 
-/* --- BARRA LATERAL (SIDEBAR) --- */
+
+/* =========================
+   SIDEBAR
+========================= */
+
 .sidebar {
     width: 260px;
+    min-width: 260px;
     background-color: #2c3e50;
     color: white;
     padding: 20px;
     display: flex;
     flex-direction: column;
 }
+
+
+/* LOGO */
 
 .logo {
     text-align: center;
@@ -41,7 +50,15 @@ body {
     color: #3498db;
 }
 
-/* Estilização dos Grupos de Menu */
+
+/* =========================
+   MENU
+========================= */
+
+.menu {
+    width: 100%;
+}
+
 .menu-group {
     margin-bottom: 25px;
 }
@@ -62,37 +79,49 @@ body {
     margin-bottom: 5px;
 }
 
+
+/* LINKS */
+
 .menu ul li a {
     color: #ecf0f1;
     text-decoration: none;
     display: block;
+    width: 100%;
     padding: 10px;
     border-radius: 4px;
-    transition: background 0.3s;
+    transition: 0.3s;
     font-size: 14px;
 }
 
-/* Efeito ao passar o mouse nos links */
+
+/* HOVER */
+
 .menu ul li a:hover {
     background-color: #34495e;
     color: #3498db;
 }
 
-/* --- ÁREA DE CONTEÚDO PRINCIPAL --- */
+
+/* =========================
+   CONTEÚDO PRINCIPAL
+========================= */
+
 .content {
-    flex: 1; /* Ocupa todo o resto da tela */
+    flex: 1;
     display: flex;
     flex-direction: column;
 }
 
-/* Cabeçalho superior */
+
+/* HEADER */
+
 .content-header {
     background-color: white;
     padding: 15px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .content-header h2 {
@@ -105,8 +134,82 @@ body {
     font-weight: 500;
 }
 
-/* Espaço onde ficarão suas tabelas e formulários */
+
+/* ÁREA DAS PÁGINAS */
+
 .view-container {
     padding: 30px;
     flex: 1;
+}
+
+
+/* =========================
+   FORMULÁRIOS
+========================= */
+
+input,
+select,
+textarea,
+button {
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+
+/* BOTÕES */
+
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+
+/* TABELAS */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: white;
+}
+
+table th,
+table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+table th {
+    background-color: #ecf0f1;
+}
+
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 768px) {
+
+    .dashboard-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .content-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
 }

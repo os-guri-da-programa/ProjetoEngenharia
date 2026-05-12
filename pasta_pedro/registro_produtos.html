@@ -1,163 +1,566 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
-  <title>CRUD de Pedidos</title>
+
+  <title>Registro de Produtos</title>
+
+  <link rel="stylesheet" href="../pasta_fabiane/index.css">
+
   <style>
-    body {
-      font-family: Arial;
-      margin: 20px;
+
+    .form-container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 6px;
+      margin-bottom: 25px;
+      border: 1px solid #ddd;
     }
-    input, button {
-      margin: 5px;
+
+    .form-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
+
+    .form-group input {
+      flex: 1;
+      min-width: 200px;
     }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: center;
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
     }
-    .hidden {
-      display: none;
+
+    #listaProdutos {
+      margin-top: 15px;
+      padding-left: 20px;
     }
+
+    #listaProdutos li {
+      margin-bottom: 8px;
+    }
+
+    .empty-message {
+      margin-top: 15px;
+      color: #777;
+    }
+
   </style>
+
 </head>
+
 <body>
 
-<h2>Cadastro de Pedido</h2>
+<div class="dashboard-container">
 
-<input type="text" id="cliente" placeholder="Nome do Cliente">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
 
-<h4>Adicionar Produto</h4>
-<input type="text" id="produto" placeholder="Produto">
-<input type="number" id="quantidade" placeholder="Quantidade">
-<button onclick="addProduto()">Adicionar Produto</button>
+    <div class="logo">
+      <h1>CRUD</h1>
+    </div>
 
-<ul id="listaProdutos"></ul>
+    <nav class="menu">
 
-<button onclick="salvarPedido()">Salvar Pedido</button>
+      <section class="menu-group">
 
-<hr>
+        <h3>Cadastros</h3>
 
-<h2>Pedidos</h2>
+        <ul>
 
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Cliente</th>
-      <th>Ações</th>
-    </tr>
-  </thead>
-  <tbody id="tabelaPedidos"></tbody>
-</table>
+          <li>
+            <a href="../pasta_mateus/cadastro_clientes.html">
+              Cadastro de Clientes
+            </a>
+          </li>
+
+          <li>
+            <a href="../pasta_mateus/cadastro_produtos.html">
+              Cadastro de Produtos
+            </a>
+          </li>
+
+          <li>
+            <a href="../pasta_pedro/registro_produtos.html">
+              Registro de Produtos
+            </a>
+          </li>
+
+        </ul>
+
+      </section>
+
+
+      <section class="menu-group">
+
+        <h3>Estoque</h3>
+
+        <ul>
+
+          <li>
+            <a href="../pasta_davi/registro_de_entrada.html">
+              Registro de Entrada
+            </a>
+          </li>
+
+          <li>
+            <a href="../pasta_davi/relatorio.html">
+              Consulta e Relatório
+            </a>
+          </li>
+
+        </ul>
+
+      </section>
+
+
+      <section class="menu-group">
+
+        <h3>Pedidos</h3>
+
+        <ul>
+
+          <li>
+            <a href="../pasta_heitor/consulta_de_pedidos.html">
+              Consulta de Pedidos
+            </a>
+          </li>
+
+        </ul>
+
+      </section>
+
+
+      <section class="menu-group">
+
+        <h3>Vendas</h3>
+
+        <ul>
+
+          <li>
+            <a href="../pasta_enzo/registro_vendas.html">
+              Registro de Vendas
+            </a>
+          </li>
+
+          <li>
+            <a href="../pasta_enzo/relatorio_vendas.html">
+              Relatório de Vendas
+            </a>
+          </li>
+
+        </ul>
+
+      </section>
+
+    </nav>
+
+  </aside>
+
+
+  <!-- CONTEÚDO -->
+  <main class="content">
+
+    <header class="content-header">
+
+      <h2>Registro de Produtos</h2>
+
+      <div class="user-info">
+        Usuário: Admin
+      </div>
+
+    </header>
+
+
+    <section class="view-container">
+
+      <div class="form-container">
+
+        <h2>Cadastro de Pedido</h2>
+
+        <div class="form-group">
+
+          <input
+            type="text"
+            id="cliente"
+            placeholder="Nome do Cliente"
+          >
+
+        </div>
+
+
+        <h3>Adicionar Produto</h3>
+
+        <div class="form-group">
+
+          <input
+            type="text"
+            id="produto"
+            placeholder="Produto"
+          >
+
+          <input
+            type="number"
+            id="quantidade"
+            placeholder="Quantidade"
+            min="1"
+          >
+
+          <button onclick="addProduto()">
+            Adicionar Produto
+          </button>
+
+        </div>
+
+
+        <ul id="listaProdutos"></ul>
+
+
+        <div class="actions">
+
+          <button onclick="salvarPedido()">
+            Salvar Pedido
+          </button>
+
+          <button onclick="limparFormulario()">
+            Limpar
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <h2>Pedidos Registrados</h2>
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Ações</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="tabelaPedidos"></tbody>
+
+      </table>
+
+      <p class="empty-message" id="mensagemVazia"></p>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script src="mock_pedidos.js"></script>
 
 <script>
-let pedidos = [];
+
+let pedidos =
+  JSON.parse(localStorage.getItem("pedidos"));
+
+if (!pedidos) {
+
+  pedidos = mockPedidos;
+
+  localStorage.setItem(
+    "pedidos",
+    JSON.stringify(pedidos)
+  );
+
+}
+
 let produtosTemp = [];
+
 let editandoId = null;
 
+
+/* LISTA TEMPORÁRIA */
+
 function addProduto() {
-  const nome = document.getElementById("produto").value;
-  const qtd = document.getElementById("quantidade").value;
 
-  if (!nome || !qtd) return alert("Preencha produto e quantidade");
+  const nome =
+    document.getElementById("produto").value;
 
-  produtosTemp.push({ nome, qtd });
+  const qtd =
+    document.getElementById("quantidade").value;
+
+  if (!nome || !qtd) {
+
+    return alert(
+      "Preencha produto e quantidade"
+    );
+
+  }
+
+  produtosTemp.push({
+    nome,
+    qtd
+  });
 
   renderProdutosTemp();
 
   document.getElementById("produto").value = "";
+
   document.getElementById("quantidade").value = "";
+
 }
 
+
+/* RENDER PRODUTOS */
+
 function renderProdutosTemp() {
-  const lista = document.getElementById("listaProdutos");
+
+  const lista =
+    document.getElementById("listaProdutos");
+
   lista.innerHTML = "";
 
   produtosTemp.forEach((p, index) => {
-    lista.innerHTML += `<li>${p.nome} - ${p.qtd}</li>`;
+
+    lista.innerHTML += `
+      <li>
+
+        ${p.nome} - ${p.qtd}
+
+        <button onclick="removerProduto(${index})">
+          Remover
+        </button>
+
+      </li>
+    `;
+
   });
+
 }
 
+
+/* REMOVER */
+
+function removerProduto(index) {
+
+  produtosTemp.splice(index, 1);
+
+  renderProdutosTemp();
+
+}
+
+
+/* SALVAR */
+
 function salvarPedido() {
-  const cliente = document.getElementById("cliente").value;
+
+  const cliente =
+    document.getElementById("cliente").value;
 
   if (!cliente || produtosTemp.length === 0) {
-    return alert("Preencha cliente e adicione produtos");
+
+    return alert(
+      "Preencha cliente e adicione produtos"
+    );
+
   }
 
   if (editandoId !== null) {
-    const pedido = pedidos.find(p => p.id === editandoId);
+
+    const pedido =
+      pedidos.find(p => p.id === editandoId);
+
     pedido.cliente = cliente;
+
     pedido.produtos = [...produtosTemp];
+
     editandoId = null;
+
+    alert("Pedido atualizado com sucesso!");
+
   } else {
+
     pedidos.push({
-      id: Date.now(),
+
+      id: pedidos.length + 1,
+
       cliente,
+
       produtos: [...produtosTemp]
+
     });
+
+    alert("Pedido cadastrado com sucesso!");
+
   }
 
+  localStorage.setItem(
+    "pedidos",
+    JSON.stringify(pedidos)
+  );
+
   limparFormulario();
+
   renderTabela();
+
 }
+
+
+/* TABELA */
 
 function renderTabela() {
-  const tabela = document.getElementById("tabelaPedidos");
+
+  const tabela =
+    document.getElementById("tabelaPedidos");
+
+  const mensagem =
+    document.getElementById("mensagemVazia");
+
   tabela.innerHTML = "";
 
+  if (pedidos.length === 0) {
+
+    mensagem.innerText =
+      "Nenhum pedido registrado.";
+
+    return;
+
+  }
+
+  mensagem.innerText = "";
+
   pedidos.forEach(p => {
+
     tabela.innerHTML += `
       <tr>
+
         <td>${p.id}</td>
+
         <td>${p.cliente}</td>
+
         <td>
-          <button onclick="detalhes(${p.id})">Detalhes</button>
-          <button onclick="editar(${p.id})">Editar</button>
-          <button onclick="deletar(${p.id})">Deletar</button>
+
+          <button onclick="detalhes(${p.id})">
+            Detalhes
+          </button>
+
+          <button onclick="editar(${p.id})">
+            Editar
+          </button>
+
+          <button onclick="deletar(${p.id})">
+            Excluir
+          </button>
+
         </td>
+
       </tr>
     `;
+
   });
+
 }
 
+
+/* DETALHES */
+
 function detalhes(id) {
-  const pedido = pedidos.find(p => p.id === id);
-  let texto = `Cliente: ${pedido.cliente}\nProdutos:\n`;
+
+  const pedido =
+    pedidos.find(p => p.id === id);
+
+  let texto =
+    `Cliente: ${pedido.cliente}\n\nProdutos:\n`;
 
   pedido.produtos.forEach(p => {
-    texto += `- ${p.nome} (${p.qtd})\n`;
+
+    texto += `
+- ${p.nome} (${p.qtd})
+`;
+
   });
 
   alert(texto);
+
 }
 
-function editar(id) {
-  const pedido = pedidos.find(p => p.id === id);
 
-  document.getElementById("cliente").value = pedido.cliente;
-  produtosTemp = [...pedido.produtos];
+/* EDITAR */
+
+function editar(id) {
+
+  const pedido =
+    pedidos.find(p => p.id === id);
+
+  document.getElementById("cliente").value =
+    pedido.cliente;
+
+  produtosTemp =
+    JSON.parse(JSON.stringify(pedido.produtos));
+
   editandoId = id;
 
   renderProdutosTemp();
+
+  window.scrollTo(0, 0);
+
 }
+
+
+/* EXCLUIR */
 
 function deletar(id) {
-  pedidos = pedidos.filter(p => p.id !== id);
-  renderTabela();
+
+  if (
+    confirm("Deseja excluir este pedido?")
+  ) {
+
+    pedidos =
+      pedidos.filter(p => p.id !== id);
+
+    localStorage.setItem(
+      "pedidos",
+      JSON.stringify(pedidos)
+    );
+
+    renderTabela();
+
+    alert("Pedido excluído com sucesso!");
+
+  }
+
 }
 
+
+/* LIMPAR */
+
 function limparFormulario() {
+
   document.getElementById("cliente").value = "";
+
+  document.getElementById("produto").value = "";
+
+  document.getElementById("quantidade").value = "";
+
   produtosTemp = [];
+
+  editandoId = null;
+
   renderProdutosTemp();
+
 }
+
+
+/* INICIALIZAR */
+
+renderTabela();
+
 </script>
 
 </body>

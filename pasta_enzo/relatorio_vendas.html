@@ -1,116 +1,206 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <title>Relatório de Vendas</title>
+
+  <link rel="stylesheet" href="../pasta_fabiane/index.css">
+
   <style>
-    body {
-      font-family: Arial;
-      margin: 20px;
+    .form-container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 6px;
+      margin-bottom: 25px;
+      border: 1px solid #ddd;
     }
 
-    input, button {
-      margin: 5px;
-      padding: 6px;
+    .form-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
+    .total-box {
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      color: #2c3e50;
     }
 
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: center;
-    }
-
-    h2 {
-      margin-top: 30px;
+    .empty-message {
+      margin-top: 15px;
+      color: #777;
     }
   </style>
 </head>
+
 <body>
 
-<h2>Relatório de Vendas</h2>
+<div class="dashboard-container">
 
-Filtro por data:<br>
-<input type="date" id="dataInicio">
-até
-<input type="date" id="dataFim">
-<button onclick="filtrar()">Filtrar</button>
-<button onclick="limparFiltro()">Limpar</button>
+  <aside class="sidebar">
+    <div class="logo">
+      <h1>CRUD</h1>
+    </div>
 
-<h3 id="totalGeral">Total Geral: R$ 0.00</h3>
+    <nav class="menu">
+      <section class="menu-group">
+        <h3>Cadastros</h3>
+        <ul>
+          <li><a href="../pasta_mateus/cadastro_clientes.html">Cadastro de Clientes</a></li>
+          <li><a href="../pasta_mateus/cadastro_produtos.html">Cadastro de Produtos</a></li>
+          <li><a href="../pasta_pedro/registro_produtos.html">Registro de Produtos</a></li>
+        </ul>
+      </section>
 
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Cliente</th>
-      <th>Data</th>
-      <th>Total</th>
-    </tr>
-  </thead>
-  <tbody id="tabelaRelatorio"></tbody>
-</table>
+      <section class="menu-group">
+        <h3>Estoque</h3>
+        <ul>
+          <li><a href="../pasta_davi/registro_de_entrada.html">Registro de Entrada</a></li>
+          <li><a href="../pasta_davi/relatorio.html">Consulta e Relatório</a></li>
+        </ul>
+      </section>
 
-<h2>Resumo por Produto</h2>
+      <section class="menu-group">
+        <h3>Pedidos</h3>
+        <ul>
+          <li><a href="../pasta_heitor/consulta_de_pedidos.html">Consulta de Pedidos</a></li>
+        </ul>
+      </section>
 
-<table>
-  <thead>
-    <tr>
-      <th>Produto</th>
-      <th>Quantidade Vendida</th>
-    </tr>
-  </thead>
-  <tbody id="resumoProdutos"></tbody>
-</table>
+      <section class="menu-group">
+        <h3>Vendas</h3>
+        <ul>
+          <li><a href="../pasta_enzo/registro_vendas.html">Registro de Vendas</a></li>
+          <li><a href="../pasta_enzo/relatorio_vendas.html">Relatório de Vendas</a></li>
+        </ul>
+      </section>
+    </nav>
+  </aside>
+
+  <main class="content">
+
+    <header class="content-header">
+      <h2>Relatório de Vendas</h2>
+      <div class="user-info">Usuário: Admin</div>
+    </header>
+
+    <section class="view-container">
+
+      <div class="form-container">
+        <h2>Filtro por Data</h2>
+
+        <div class="form-group">
+          <label for="dataInicio">De:</label>
+          <input type="date" id="dataInicio">
+
+          <label for="dataFim">Até:</label>
+          <input type="date" id="dataFim">
+
+          <button onclick="filtrar()">Filtrar</button>
+          <button onclick="limparFiltro()">Limpar</button>
+          <button onclick="window.print()">Imprimir</button>
+        </div>
+      </div>
+
+      <h3 id="totalGeral" class="total-box">
+        Total Geral: R$ 0,00
+      </h3>
+
+      <h2>Vendas Registradas</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Data</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+
+        <tbody id="tabelaRelatorio"></tbody>
+      </table>
+
+      <p id="mensagemVazia" class="empty-message"></p>
+
+      <h2>Resumo por Produto</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Quantidade Vendida</th>
+          </tr>
+        </thead>
+
+        <tbody id="resumoProdutos"></tbody>
+      </table>
+
+    </section>
+
+  </main>
+
+</div>
 
 <script>
-let vendas = [
-  {
-    id: 1,
-    cliente: "João",
-    data: "2026-03-30",
-    total: 50,
-    produtos: [
-      { nome: "Hambúrguer", qtd: 2 },
-      { nome: "Refri", qtd: 1 }
-    ]
-  },
-  {
-    id: 2,
-    cliente: "Maria",
-    data: "2026-03-31",
-    total: 30,
-    produtos: [
-      { nome: "Pizza", qtd: 1 },
-      { nome: "Refri", qtd: 2 }
-    ]
-  }
-];
+
+let vendas =
+  JSON.parse(localStorage.getItem("vendas"));
+
+if (!vendas) {
+
+  vendas = mockVendas;
+
+  localStorage.setItem(
+    "vendas",
+    JSON.stringify(vendas)
+  );
+
+}
+
+function formatarMoeda(valor) {
+  return Number(valor).toFixed(2).replace(".", ",");
+}
+
+function formatarData(data) {
+  if (!data) return "Sem data";
+  return new Date(data + "T00:00:00").toLocaleDateString("pt-BR");
+}
 
 function render(vendasFiltradas) {
   const tabela = document.getElementById("tabelaRelatorio");
   const resumo = document.getElementById("resumoProdutos");
+  const mensagem = document.getElementById("mensagemVazia");
 
   tabela.innerHTML = "";
   resumo.innerHTML = "";
+
+  if (vendasFiltradas.length === 0) {
+    mensagem.innerText = "Nenhuma venda encontrada.";
+    document.getElementById("totalGeral").innerText = "Total Geral: R$ 0,00";
+    return;
+  }
+
+  mensagem.innerText = "";
 
   let totalGeral = 0;
   let mapaProdutos = {};
 
   vendasFiltradas.forEach(v => {
-    totalGeral += v.total;
+    totalGeral += Number(v.total);
 
     tabela.innerHTML += `
       <tr>
         <td>${v.id}</td>
         <td>${v.cliente}</td>
-        <td>${v.data}</td>
-        <td>R$ ${v.total.toFixed(2)}</td>
+        <td>${formatarData(v.data)}</td>
+        <td>R$ ${formatarMoeda(v.total)}</td>
       </tr>
     `;
 
@@ -118,12 +208,13 @@ function render(vendasFiltradas) {
       if (!mapaProdutos[p.nome]) {
         mapaProdutos[p.nome] = 0;
       }
-      mapaProdutos[p.nome] += p.qtd;
+
+      mapaProdutos[p.nome] += Number(p.qtd);
     });
   });
 
   document.getElementById("totalGeral").innerText =
-    "Total Geral: R$ " + totalGeral.toFixed(2);
+    "Total Geral: R$ " + formatarMoeda(totalGeral);
 
   for (let produto in mapaProdutos) {
     resumo.innerHTML += `
@@ -142,7 +233,10 @@ function filtrar() {
   let filtradas = vendas;
 
   if (inicio && fim) {
-    filtradas = vendas.filter(v => v.data >= inicio && v.data <= fim);
+    filtradas = vendas.filter(v => {
+      if (!v.data) return false;
+      return v.data >= inicio && v.data <= fim;
+    });
   }
 
   render(filtradas);
@@ -151,6 +245,7 @@ function filtrar() {
 function limparFiltro() {
   document.getElementById("dataInicio").value = "";
   document.getElementById("dataFim").value = "";
+
   render(vendas);
 }
 

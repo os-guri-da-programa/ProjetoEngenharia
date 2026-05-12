@@ -1,5 +1,3 @@
-// Dados de mock para simular registros de entrada de produtos de um bar
-// Cada entrada contém fornecedor, data, produtos e totais.
 const mockEntradasBar = [
   {
     id: 1,
@@ -60,4 +58,3 @@ const mockEntradasBar = [
     totalValor: 453.00
   }
 ];
-

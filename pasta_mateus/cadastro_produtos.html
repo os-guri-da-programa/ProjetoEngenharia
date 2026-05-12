@@ -1,61 +1,210 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
+
   <title>Cadastro de Produtos</title>
+
+  <link rel="stylesheet" href="../pasta_fabiane/index.css">
+
+  <style>
+    .form-container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 6px;
+      margin-bottom: 25px;
+      border: 1px solid #ddd;
+    }
+
+    .form-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+
+    .form-group input {
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .empty-message {
+      margin-top: 15px;
+      color: #777;
+    }
+  </style>
 </head>
+
 <body>
 
-<h2>Cadastro de Produtos</h2>
+<div class="dashboard-container">
 
-<a href="clientes.html">Ir para Clientes</a>
+  <aside class="sidebar">
+    <div class="logo">
+      <h1>CRUD</h1>
+    </div>
 
-<form id="formProduto">
-  <input type="text" id="nomeProduto" placeholder="Nome do Produto" required>
-  <input type="date" id="validade" required>
-  <input type="number" id="preco" placeholder="Preço" required>
-  <input type="number" id="quantidade" placeholder="Quantidade" required>
-  <input type="text" id="tipoCusto" placeholder="Tipo de custo" required>
-  <input type="number" id="venda" placeholder="Valor de venda" required>
-  <button type="submit">Cadastrar</button>
-</form>
+    <nav class="menu">
+      <section class="menu-group">
+        <h3>Cadastros</h3>
+        <ul>
+          <li><a href="../pasta_mateus/cadastro_clientes.html">Cadastro de Clientes</a></li>
+          <li><a href="../pasta_mateus/cadastro_produtos.html">Cadastro de Produtos</a></li>
+          <li><a href="../pasta_pedro/registro_produtos.html">Registro de Produtos</a></li>
+        </ul>
+      </section>
 
-<table border="1">
-  <thead>
-    <tr>
-      <th>Produto</th>
-      <th>Validade</th>
-      <th>Preço</th>
-      <th>Quantidade</th>
-      <th>Tipo de Custo</th>
-      <th>Venda</th>
-    </tr>
-  </thead>
-  <tbody id="listaProdutos"></tbody>
-</table>
+      <section class="menu-group">
+        <h3>Estoque</h3>
+        <ul>
+          <li><a href="../pasta_davi/registro_de_entrada.html">Registro de Entrada</a></li>
+          <li><a href="../pasta_davi/relatorio.html">Consulta e Relatório</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Pedidos</h3>
+        <ul>
+          <li><a href="../pasta_heitor/consulta_de_pedidos.html">Consulta de Pedidos</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Vendas</h3>
+        <ul>
+          <li><a href="../pasta_enzo/registro_vendas.html">Registro de Vendas</a></li>
+          <li><a href="../pasta_enzo/relatorio_vendas.html">Relatório de Vendas</a></li>
+        </ul>
+      </section>
+    </nav>
+  </aside>
+
+  <main class="content">
+
+    <header class="content-header">
+      <h2>Cadastro de Produtos</h2>
+      <div class="user-info">Usuário: Admin</div>
+    </header>
+
+    <section class="view-container">
+
+      <div class="form-container">
+        <form id="formProduto">
+
+          <div class="form-group">
+            <input type="text" id="nomeProduto" placeholder="Nome do Produto" required>
+            <input type="date" id="validade" required>
+            <input type="number" id="preco" placeholder="Preço de custo" min="0" step="0.01" required>
+          </div>
+
+          <div class="form-group">
+            <input type="number" id="quantidade" placeholder="Quantidade" min="1" required>
+            <input type="text" id="tipoCusto" placeholder="Tipo de custo" required>
+            <input type="number" id="venda" placeholder="Valor de venda" min="0" step="0.01" required>
+          </div>
+
+          <div class="actions">
+            <button type="submit">Cadastrar</button>
+            <button type="button" onclick="limparFormulario()">Limpar</button>
+          </div>
+
+        </form>
+      </div>
+
+      <h2>Produtos Cadastrados</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Validade</th>
+            <th>Preço</th>
+            <th>Quantidade</th>
+            <th>Tipo de Custo</th>
+            <th>Venda</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+
+        <tbody id="listaProdutos"></tbody>
+      </table>
+
+      <p class="empty-message" id="mensagemVazia"></p>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script src="mock_produtos.js"></script>
 
 <script>
-let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+
+let produtos =
+  JSON.parse(localStorage.getItem("produtos"));
+
+if (!produtos) {
+
+  produtos = mockProdutos;
+
+  localStorage.setItem(
+    "produtos",
+    JSON.stringify(produtos)
+  );
+
+}
+
+let editandoIndex = null;
+
+function formatarMoeda(valor) {
+  return Number(valor).toFixed(2).replace(".", ",");
+}
+
+function formatarData(data) {
+  if (!data) return "";
+  return new Date(data + "T00:00:00").toLocaleDateString("pt-BR");
+}
 
 function atualizarProdutos() {
   const lista = document.getElementById("listaProdutos");
+  const mensagem = document.getElementById("mensagemVazia");
+
   lista.innerHTML = "";
 
-  produtos.forEach(p => {
+  if (produtos.length === 0) {
+    mensagem.innerText = "Nenhum produto cadastrado.";
+    return;
+  }
+
+  mensagem.innerText = "";
+
+  produtos.forEach((p, index) => {
     lista.innerHTML += `
       <tr>
         <td>${p.nome}</td>
-        <td>${p.validade}</td>
-        <td>R$ ${p.preco}</td>
+        <td>${formatarData(p.validade)}</td>
+        <td>R$ ${formatarMoeda(p.preco)}</td>
         <td>${p.quantidade}</td>
         <td>${p.tipoCusto}</td>
-        <td>R$ ${p.venda}</td>
+        <td>R$ ${formatarMoeda(p.venda)}</td>
+        <td>
+          <button onclick="editarProduto(${index})">Editar</button>
+          <button onclick="excluirProduto(${index})">Excluir</button>
+        </td>
       </tr>
     `;
   });
 }
 
-document.getElementById("formProduto").addEventListener("submit", function(e){
+document.getElementById("formProduto").addEventListener("submit", function(e) {
   e.preventDefault();
 
   const produto = {
@@ -67,12 +216,54 @@ document.getElementById("formProduto").addEventListener("submit", function(e){
     venda: document.getElementById("venda").value
   };
 
-  produtos.push(produto);
+  if (editandoIndex !== null) {
+    produtos[editandoIndex] = produto;
+    editandoIndex = null;
+    alert("Produto atualizado com sucesso!");
+  } else {
+    produtos.push(produto);
+    alert("Produto cadastrado com sucesso!");
+  }
+
   localStorage.setItem("produtos", JSON.stringify(produtos));
 
   this.reset();
   atualizarProdutos();
 });
+
+function editarProduto(index) {
+  const produto = produtos[index];
+
+  document.getElementById("nomeProduto").value = produto.nome;
+  document.getElementById("validade").value = produto.validade;
+  document.getElementById("preco").value = produto.preco;
+  document.getElementById("quantidade").value = produto.quantidade;
+  document.getElementById("tipoCusto").value = produto.tipoCusto;
+  document.getElementById("venda").value = produto.venda;
+
+  editandoIndex = index;
+  window.scrollTo(0, 0);
+}
+
+function excluirProduto(index) {
+  if (confirm("Deseja excluir este produto?")) {
+    produtos.splice(index, 1);
+    localStorage.setItem("produtos", JSON.stringify(produtos));
+    atualizarProdutos();
+    alert("Produto excluído com sucesso!");
+  }
+}
+
+function limparFormulario() {
+
+  document.getElementById("formProduto").reset();
+
+  document.getElementById("validade").valueAsDate = new Date();
+
+  editandoIndex = null;
+}
+
+document.getElementById("validade").valueAsDate = new Date();
 
 atualizarProdutos();
 </script>
