@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
 
-  <title>Registro de Produtos</title>
+  <title>Registro de Pedidos</title>
 
   <link rel="stylesheet" href="../pasta_fabiane/index.css">
 
@@ -94,12 +94,6 @@
             </a>
           </li>
 
-          <li>
-            <a href="../pasta_pedro/registro_produtos.html">
-              Registro de Produtos
-            </a>
-          </li>
-
         </ul>
 
       </section>
@@ -133,6 +127,12 @@
         <h3>Pedidos</h3>
 
         <ul>
+
+                    <li>
+            <a href="../pasta_pedro/registro_pedidos.html">
+              Registro de Pedidos
+            </a>
+          </li>
 
           <li>
             <a href="../pasta_heitor/consulta_de_pedidos.html">
@@ -177,7 +177,7 @@
 
     <header class="content-header">
 
-      <h2>Registro de Produtos</h2>
+      <h2>Registro de Pedidos</h2>
 
       <div class="user-info">
         Usuário: Admin
@@ -194,11 +194,11 @@
 
         <div class="form-group">
 
-          <input
-            type="text"
-            id="cliente"
-            placeholder="Nome do Cliente"
-          >
+          <select id="cliente" required>
+              <option value="" disabled selected>
+                Selecione um cliente
+              </option>
+          </select>
 
         </div>
 
@@ -255,6 +255,7 @@
             <th>ID</th>
             <th>Cliente</th>
             <th>Total Gasto</th>
+            <th>Status</th>
             <th>Ações</th>
           </tr>
 
@@ -401,6 +402,8 @@ function salvarPedido() {
 
     pedido.produtos = [...produtosTemp];
 
+    pedido.status = pedido.status || "aberto";
+
     editandoId = null;
 
     alert("Pedido atualizado com sucesso!");
@@ -409,9 +412,13 @@ function salvarPedido() {
 
     pedidos.push({
 
-      id: pedidos.length + 1,
+      id: pedidos.length > 0
+      ? Math.max(...pedidos.map(p => p.id)) + 1
+      : 1,
 
       cliente,
+
+      status: "aberto",
 
       produtos: [...produtosTemp]
 
@@ -434,6 +441,28 @@ function salvarPedido() {
 
 
 /* TABELA */
+
+function carregarClientes() {
+  const clientes =
+    JSON.parse(localStorage.getItem("clientes")) || [];
+
+  const select =
+    document.getElementById("cliente");
+
+  select.innerHTML = `
+    <option value="" disabled selected>
+      Selecione um cliente
+    </option>
+  `;
+
+  clientes.forEach(cliente => {
+    select.innerHTML += `
+      <option value="${cliente.nome}">
+        ${cliente.nome}
+      </option>
+    `;
+  });
+}
 
 function carregarProdutos() {
   const produtosCadastrados =
@@ -500,7 +529,11 @@ function renderTabela() {
               R$ ${calcularTotalPedido(p).toFixed(2)}
             </td>
 
-        <td>
+            <td>
+              ${p.status || "aberto"}
+            </td>
+
+            <td>
 
           <button onclick="detalhes(${p.id})">
             Detalhes
@@ -612,6 +645,7 @@ function limparFormulario() {
 
 }
 
+carregarClientes();
 
 carregarProdutos();
 

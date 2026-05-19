@@ -52,7 +52,6 @@
         <ul>
           <li><a href="../pasta_mateus/cadastro_clientes.html">Cadastro de Clientes</a></li>
           <li><a href="../pasta_mateus/cadastro_produtos.html">Cadastro de Produtos</a></li>
-          <li><a href="../pasta_pedro/registro_produtos.html">Registro de Produtos</a></li>
         </ul>
       </section>
 
@@ -67,6 +66,7 @@
       <section class="menu-group">
         <h3>Pedidos</h3>
         <ul>
+          <li><a href="../pasta_pedro/registro_pedidos.html">Registro de Pedidos</a></li>
           <li><a href="../pasta_heitor/consulta_de_pedidos.html">Consulta de Pedidos</a></li>
         </ul>
       </section>
@@ -119,9 +119,10 @@
       <table>
         <thead>
           <tr>
-            <th>Mesa/Cliente</th>
-            <th>Item</th>
-            <th>Valor</th>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Produtos</th>
+            <th>Total</th>
             <th>Status</th>
           </tr>
         </thead>
@@ -138,11 +139,28 @@
 </div>
 
 <script>
-let pedidos = [
-  { mesa: "1", item: "Pizza", valor: 50, status: "aberto" },
-  { mesa: "2", item: "Hambúrguer", valor: 30, status: "fechado" },
-  { mesa: "1", item: "Refrigerante", valor: 10, status: "aberto" }
-];
+
+let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+
+function formatarMoeda(valor) {
+  return Number(valor).toFixed(2).replace(".", ",");
+}
+
+function calcularTotalPedido(pedido) {
+  let total = 0;
+
+  pedido.produtos.forEach(produto => {
+    total += Number(produto.total || 0);
+  });
+
+  return total;
+}
+
+function listarProdutos(pedido) {
+  return pedido.produtos
+    .map(produto => `${produto.nome} (${produto.qtd})`)
+    .join(", ");
+}
 
 function buscarPedidos() {
   const busca = document
@@ -155,12 +173,21 @@ function buscarPedidos() {
     .value;
 
   const resultado = pedidos.filter(p => {
+    const cliente = p.cliente.toLowerCase();
+
+    const produtos = p.produtos
+      .map(produto => produto.nome.toLowerCase())
+      .join(" ");
+
+    const status = p.status || "aberto";
+
     const matchBusca =
-      p.mesa.toLowerCase().includes(busca) ||
-      p.item.toLowerCase().includes(busca);
+      cliente.includes(busca) ||
+      produtos.includes(busca) ||
+      String(p.id).includes(busca);
 
     const matchStatus =
-      filtro === "todos" || p.status === filtro;
+      filtro === "todos" || status === filtro;
 
     return matchBusca && matchStatus;
   });
@@ -181,29 +208,31 @@ function atualizarTabela(lista) {
 
   mensagem.innerText = "";
 
-  let total = 0;
+  let totalGeral = 0;
 
   lista.forEach(p => {
-    total += p.valor;
+    const totalPedido = calcularTotalPedido(p);
+    totalGeral += totalPedido;
 
     tabela.innerHTML += `
       <tr>
-        <td>${p.mesa}</td>
-        <td>${p.item}</td>
-        <td>R$ ${p.valor.toFixed(2)}</td>
-        <td>${p.status}</td>
+        <td>${p.id}</td>
+        <td>${p.cliente}</td>
+        <td>${listarProdutos(p)}</td>
+        <td>R$ ${formatarMoeda(totalPedido)}</td>
+        <td>${p.status || "aberto"}</td>
       </tr>
     `;
   });
 
   tabela.innerHTML += `
     <tr>
-      <td colspan="2">
+      <td colspan="3">
         <strong>Total</strong>
       </td>
 
       <td colspan="2">
-        <strong>R$ ${total.toFixed(2)}</strong>
+        <strong>R$ ${formatarMoeda(totalGeral)}</strong>
       </td>
     </tr>
   `;
@@ -213,10 +242,13 @@ function limparBusca() {
   document.getElementById("buscaMesa").value = "";
   document.getElementById("filtroStatus").value = "todos";
 
+  pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+
   atualizarTabela(pedidos);
 }
 
 atualizarTabela(pedidos);
+</script>
 </script>
 
 </body>

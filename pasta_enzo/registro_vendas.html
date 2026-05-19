@@ -91,7 +91,6 @@
         <ul>
           <li><a href="../pasta_mateus/cadastro_clientes.html">Cadastro de Clientes</a></li>
           <li><a href="../pasta_mateus/cadastro_produtos.html">Cadastro de Produtos</a></li>
-          <li><a href="../pasta_pedro/registro_produtos.html">Registro de Produtos</a></li>
         </ul>
       </section>
 
@@ -106,6 +105,7 @@
       <section class="menu-group">
         <h3>Pedidos</h3>
         <ul>
+          <li><a href="../pasta_pedro/registro_pedidos.html">Registro de Pedidos</a></li>
           <li><a href="../pasta_heitor/consulta_de_pedidos.html">Consulta de Pedidos</a></li>
         </ul>
       </section>
@@ -133,7 +133,21 @@
         <h2>Nova Venda</h2>
 
         <div class="form-group">
-          <select id="cliente" required></select>
+
+            <select id="cliente" required></select>
+
+            <input
+              type="date"
+              id="dataVenda"
+              required
+            >
+
+            <select id="pedido">
+              <option value="">
+                Selecione um pedido aberto
+              </option>
+            </select>
+
         </div>
 
         <h3>Adicionar Produto</h3>
@@ -193,7 +207,7 @@ function formatarMoeda(valor) {
 }
 
 function addProduto() {
-  const nome = document.getElementById("produto").value.trim();
+  const nome = document.getElementById("produto").value;
   const qtd = parseInt(document.getElementById("quantidade").value);
   const preco = parseFloat(document.getElementById("preco").value);
 
@@ -252,12 +266,46 @@ function atualizarTotal() {
 }
 
 function salvarVenda() {
-  const cliente = document.getElementById("cliente").value.trim();
+  const cliente = document.getElementById("cliente").value;
+  const data = document.getElementById("dataVenda").value;
 
-  if (!cliente || produtosTemp.length === 0) {
-    alert("Preencha o cliente e adicione pelo menos um produto.");
+  if (!cliente || !data || produtosTemp.length === 0) {
+    alert("Preencha o cliente, a data e adicione pelo menos um produto.");
     return;
   }
+
+  let produtosCadastrados =
+    JSON.parse(localStorage.getItem("produtos")) || [];
+
+  for (let itemVenda of produtosTemp) {
+    const produtoEstoque = produtosCadastrados.find(
+      p => p.nome === itemVenda.nome
+    );
+
+    if (!produtoEstoque) {
+      alert(`Produto "${itemVenda.nome}" não encontrado no estoque.`);
+      return;
+    }
+
+    if (Number(produtoEstoque.quantidade) < Number(itemVenda.qtd)) {
+      alert(
+        `Estoque insuficiente para "${itemVenda.nome}". ` +
+        `Disponível: ${produtoEstoque.quantidade}`
+      );
+      return;
+    }
+  }
+
+  produtosTemp.forEach(itemVenda => {
+    const produtoEstoque = produtosCadastrados.find(
+      p => p.nome === itemVenda.nome
+    );
+
+    produtoEstoque.quantidade =
+      Number(produtoEstoque.quantidade) - Number(itemVenda.qtd);
+  });
+
+  localStorage.setItem("produtos", JSON.stringify(produtosCadastrados));
 
   let total = 0;
 
@@ -269,6 +317,7 @@ function salvarVenda() {
     const venda = vendas.find(v => v.id === editandoId);
 
     venda.cliente = cliente;
+    venda.data = data;
     venda.produtos = [...produtosTemp];
     venda.total = total;
 
@@ -279,17 +328,48 @@ function salvarVenda() {
     vendas.push({
       id: vendas.length + 1,
       cliente,
+      data,
       produtos: [...produtosTemp],
       total
     });
 
-    alert("Venda registrada com sucesso!");
+    alert("Venda registrada com sucesso! Estoque atualizado.");
   }
+
+  fecharPedidoDoCliente(cliente);
 
   localStorage.setItem("vendas", JSON.stringify(vendas));
 
   limparFormulario();
   renderTabela();
+}
+
+function fecharPedidoDoCliente(cliente) {
+  let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+
+  const pedidoAberto = pedidos.find(
+    p => p.cliente === cliente && (p.status || "aberto") === "aberto"
+  );
+
+  if (pedidoAberto) {
+    pedidoAberto.status = "fechado";
+
+    localStorage.setItem("pedidos", JSON.stringify(pedidos));
+  }
+}
+
+function fecharPedidoDoCliente(cliente) {
+  let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+
+  const pedidoAberto = pedidos.find(
+    p => p.cliente === cliente && (p.status || "aberto") === "aberto"
+  );
+
+  if (pedidoAberto) {
+    pedidoAberto.status = "fechado";
+
+    localStorage.setItem("pedidos", JSON.stringify(pedidos));
+  }
 }
 
 function renderTabela() {
@@ -339,6 +419,7 @@ function editar(id) {
   const venda = vendas.find(v => v.id === id);
 
   document.getElementById("cliente").value = venda.cliente;
+  document.getElementById("dataVenda").value = venda.data;
   produtosTemp = JSON.parse(JSON.stringify(venda.produtos));
   editandoId = id;
 
@@ -362,6 +443,7 @@ function deletar(id) {
 
 function limparFormulario() {
   document.getElementById("cliente").value = "";
+  document.getElementById("dataVenda").valueAsDate = new Date();
   document.getElementById("produto").value = "";
   document.getElementById("quantidade").value = "";
   document.getElementById("preco").value = "";
@@ -398,6 +480,70 @@ function carregarClientes() {
 
 }
 
+document
+  .getElementById("cliente")
+
+  .addEventListener("change", function() {
+
+    carregarPedidosDoCliente(this.value);
+
+});
+
+document
+  .getElementById("pedido")
+
+  .addEventListener("change", function() {
+
+    const pedidos =
+      JSON.parse(localStorage.getItem("pedidos")) || [];
+
+    const pedido =
+      pedidos.find(p => p.id == this.value);
+
+    if (!pedido) return;
+
+    produtosTemp =
+      JSON.parse(JSON.stringify(pedido.produtos));
+
+    renderProdutosTemp();
+
+    atualizarTotal();
+
+});
+
+function carregarPedidosDoCliente(cliente) {
+
+  const pedidos =
+    JSON.parse(localStorage.getItem("pedidos")) || [];
+
+  const select =
+    document.getElementById("pedido");
+
+  select.innerHTML = `
+    <option value="">
+      Selecione um pedido aberto
+    </option>
+  `;
+
+  const pedidosAbertos = pedidos.filter(p =>
+    p.cliente === cliente &&
+    (p.status || "aberto") === "aberto"
+  );
+
+  pedidosAbertos.forEach(pedido => {
+
+    const total = calcularTotalPedido(pedido);
+
+    select.innerHTML += `
+      <option value="${pedido.id}">
+        Pedido #${pedido.id} - R$ ${formatarMoeda(total)}
+      </option>
+    `;
+
+  });
+
+}
+
 function carregarProdutos() {
 
   const produtos =
@@ -426,6 +572,18 @@ function carregarProdutos() {
 
 }
 
+function calcularTotalPedido(pedido) {
+
+  let total = 0;
+
+  pedido.produtos.forEach(produto => {
+    total += Number(produto.total || 0);
+  });
+
+  return total;
+
+}
+
 document
   .getElementById("produto")
 
@@ -438,6 +596,9 @@ document
       option.getAttribute("data-preco") || "";
 
 });
+
+document.getElementById("dataVenda").valueAsDate =
+  new Date();
 
 carregarClientes();
 

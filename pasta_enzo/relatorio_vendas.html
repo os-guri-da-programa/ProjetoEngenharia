@@ -36,6 +36,30 @@
       margin-top: 15px;
       color: #777;
     }
+
+    @media print {
+      .sidebar,
+      .content-header,
+      .form-container {
+        display: none;
+      }
+
+      .dashboard-container {
+        display: block;
+      }
+
+      .content {
+        display: block;
+      }
+
+      .view-container {
+        padding: 0;
+      }
+
+      body {
+        background: white;
+      }
+    }
   </style>
 </head>
 
@@ -54,7 +78,6 @@
         <ul>
           <li><a href="../pasta_mateus/cadastro_clientes.html">Cadastro de Clientes</a></li>
           <li><a href="../pasta_mateus/cadastro_produtos.html">Cadastro de Produtos</a></li>
-          <li><a href="../pasta_pedro/registro_produtos.html">Registro de Produtos</a></li>
         </ul>
       </section>
 
@@ -69,6 +92,7 @@
       <section class="menu-group">
         <h3>Pedidos</h3>
         <ul>
+          <li><a href="../pasta_pedro/registro_pedidos.html">Registro de Pedidos</a></li>
           <li><a href="../pasta_heitor/consulta_de_pedidos.html">Consulta de Pedidos</a></li>
         </ul>
       </section>
@@ -148,20 +172,19 @@
 
 </div>
 
+<script src="mock_vendas.js"></script>
+
 <script>
 
-let vendas =
-  JSON.parse(localStorage.getItem("vendas"));
+let vendas = JSON.parse(localStorage.getItem("vendas"));
 
 if (!vendas) {
-
-  vendas = mockVendas;
+  vendas = typeof mockVendas !== "undefined" ? mockVendas : [];
 
   localStorage.setItem(
     "vendas",
     JSON.stringify(vendas)
   );
-
 }
 
 function formatarMoeda(valor) {
