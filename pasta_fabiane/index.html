@@ -2,141 +2,154 @@
 <html lang="pt-br">
 
 <head>
-    <meta charset="UTF-8">
+  <meta charset="UTF-8">
+  <title>Sistema CRUD</title>
 
-    <title>Sistema CRUD</title>
-
-    <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
 
-    <div class="dashboard-container">
+<section class="login-container" id="loginContainer">
 
-            <aside class="sidebar">
+  <div class="login-card">
 
-                <div class="logo">
-                    <img src="./CRUD-removebg-preview.png"  width="150" height="100">
-                </div>
+    <img src="./CRUD-removebg-preview.png" width="150" height="100">
 
-                <nav class="menu">
+    <h1>Sistema CRUD</h1>
 
-                    <section class="menu-group">
+    <p>Faça login para acessar o sistema</p>
 
-                        <h3>Cadastros</h3>
+    <div class="login-group">
+      <label for="usuario">Usuário</label>
+      <input type="text" id="usuario" placeholder="Digite seu usuário">
+    </div>
 
-                        <ul>
+    <div class="login-group">
+      <label for="senha">Senha</label>
 
-                            <li>
-                                <a href="../pasta_mateus/cadastro_clientes.html">
-                                    Cadastro de Clientes
-                                </a>
-                            </li>
+      <div class="senha-container">
+        <input type="password" id="senha" placeholder="Digite sua senha">
 
-                            <li>
-                                <a href="../pasta_mateus/cadastro_produtos.html">
-                                    Cadastro de Produtos
-                                </a>
-                            </li>
+        <button type="button" class="toggle-senha" onclick="toggleSenha()">
+          👁
+        </button>
+      </div>
+    </div>
 
-                        </ul>
+    <div class="login-actions">
+      <button onclick="entrarSistema()">Entrar</button>
+      <button onclick="limparLogin()">Limpar</button>
+    </div>
 
-                    </section>
+  </div>
 
+</section>
 
-                    <section class="menu-group">
+<div class="dashboard-container menu-sistema" id="menuSistema">
 
-                        <h3>Estoque</h3>
+  <aside class="sidebar">
 
-                        <ul>
+    <div class="logo">
+      <img src="./CRUD-removebg-preview.png" width="150" height="100">
+    </div>
 
-                            <li>
-                                <a href="../pasta_davi/registro_de_entrada.html">
-                                    Registro de Entrada
-                                </a>
-                            </li>
+    <nav class="menu">
 
-                            <li>
-                                <a href="../pasta_davi/relatorio.html">
-                                    Consulta e Relatório
-                                </a>
-                            </li>
+      <section class="menu-group">
+        <h3>Cadastros</h3>
 
-                        </ul>
+        <ul>
+          <li><a href="../pasta_mateus/cadastro_clientes.html">Cadastro de Clientes</a></li>
+          <li><a href="../pasta_mateus/cadastro_produtos.html">Cadastro de Produtos</a></li>
+        </ul>
+      </section>
 
-                    </section>
+      <section class="menu-group">
+        <h3>Estoque</h3>
 
+        <ul>
+          <li><a href="../pasta_davi/registro_de_entrada.html">Registro de Entrada</a></li>
+          <li><a href="../pasta_davi/relatorio.html">Consulta e Relatório</a></li>
+        </ul>
+      </section>
 
-                    <section class="menu-group">
+      <section class="menu-group">
+        <h3>Pedidos</h3>
 
-                        <h3>Pedidos</h3>
-
-                        <ul>
-
+        <ul>
           <li><a href="../pasta_pedro/registro_pedidos.html">Registro de Pedidos</a></li>
+          <li><a href="../pasta_heitor/consulta_de_pedidos.html">Consulta de Pedidos</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Vendas</h3>
+
+        <ul>
+          <li><a href="../pasta_enzo/registro_vendas.html">Registro de Vendas</a></li>
+          <li><a href="../pasta_enzo/relatorio_vendas.html">Relatório de Vendas</a></li>
+        </ul>
+      </section>
+
+    </nav>
+
+  </aside>
+
+  <main class="content">
+
+    <header class="content-header">
+
+      <h2 id="page-title">
+        Sistema de Gerenciamento
+      </h2>
+
+      <div class="user-info">
+        <img src="./CRUD-removebg-preview.png" width="150" height="100">
+      </div>
+
+    </header>
+
+    <section class="view-container">
+      <h2>Bem-vindo ao sistema</h2>
+      <p>Selecione uma opção no menu lateral para começar.</p>
+    </section>
+
+  </main>
+
+</div>
 
 
-                            <li>
-                                <a href="../pasta_heitor/consulta_de_pedidos.html">
-                                    Consulta de Pedidos
-                                </a>
-                            </li>
+<script>
+function entrarSistema() {
+  const usuario = document.getElementById("usuario").value.trim();
+  const senha = document.getElementById("senha").value.trim();
 
-                        </ul>
+  if (!usuario || !senha) {
+    document.getElementById("mensagemLogin").innerText =
+      "Preencha usuário e senha para entrar.";
+    return;
+  }
 
-                    </section>
+  document.getElementById("loginContainer").style.display = "none";
+  document.getElementById("menuSistema").style.display = "flex";
+}
 
+function limparLogin() {
+  document.getElementById("usuario").value = "";
+  document.getElementById("senha").value = "";
 
-                    <section class="menu-group">
+  document.getElementById("mensagemLogin").innerText =
+    "Login simulado para protótipo acadêmico.";
+}
 
-                        <h3>Vendas</h3>
+function toggleSenha() {
+  const input = document.getElementById("senha");
 
-                        <ul>
-
-                            <li>
-                                <a href="../pasta_enzo/registro_vendas.html">
-                                    Registro de Vendas
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="../pasta_enzo/relatorio_vendas.html">
-                                    Relatório de Vendas
-                                </a>
-                            </li>
-
-                        </ul>
-
-                    </section>
-
-                </nav>
-
-            </aside>
-
-
-            <main class="content">
-
-                <header class="content-header">
-
-                    <h2 id="page-title">
-                        Sistema de Gerenciamento
-                    </h2>
-
-                    <div class="user-info">
-                        <img src="./CRUD-removebg-preview.png"  width="150" height="100">
-                    </div>
-
-                </header>
-
-
-                <section class="view-container">
-
-                </section>
-
-            </main>
-
-        </div>
-
+  input.type = input.type === "password" ? "text" : "password";
+}
+</script>
 
 </body>
+
 </html>
