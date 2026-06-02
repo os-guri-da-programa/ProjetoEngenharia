@@ -9,7 +9,7 @@
 
 /* BODY */
 body {
-    background-color: rgb(243, 208, 247);
+    background-color: rgb(255, 255, 255);
 }
 
 
@@ -113,7 +113,7 @@ body {
 /* HEADER */
 
 .content-header {
-    background-color: rgb(253, 226, 226);
+    background-color: rgb(243, 208, 247);
     padding: 15px 30px;
     display: flex;
     justify-content: space-between;
