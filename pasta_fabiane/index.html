@@ -10,7 +10,7 @@
 
 <body>
 
-<section class="login-container" id="loginContainer">
+<section class="login-container" id="menuInicial">
 
   <div class="login-card">
 
@@ -18,7 +18,32 @@
 
     <h1>Sistema CRUD</h1>
 
-    <p>Faça login para acessar o sistema</p>
+    <p>Escolha o tipo de acesso</p>
+
+    <div class="login-actions">
+      <button onclick="entrarComoCliente()">
+        Logar como Cliente
+      </button>
+
+      <button onclick="mostrarLoginSocio()">
+        Logar como Sócio
+      </button>
+    </div>
+
+  </div>
+
+</section>
+
+
+<section class="login-container" id="loginContainer" style="display: none;">
+
+  <div class="login-card">
+
+    <img src="./CRUD-removebg-preview.png" width="150" height="100">
+
+    <h1>Login do Sócio</h1>
+
+    <p>Informe usuário e senha</p>
 
     <div class="login-group">
       <label for="usuario">Usuário</label>
@@ -39,14 +64,17 @@
 
     <div class="login-actions">
       <button onclick="entrarSistema()">Entrar</button>
-      <button onclick="limparLogin()">Limpar</button>
+      <button onclick="voltarMenuInicial()">Voltar</button>
     </div>
+
+    <p id="mensagemLogin" class="mensagem-login"></p>
 
   </div>
 
 </section>
 
-<div class="dashboard-container menu-sistema" id="menuSistema">
+
+<div class="dashboard-container menu-sistema" id="menuSistema" style="display: none;">
 
   <aside class="sidebar">
 
@@ -58,7 +86,6 @@
 
       <section class="menu-group">
         <h3>Cadastros</h3>
-
         <ul>
           <li><a href="../pasta_mateus/cadastro_clientes.html">Cadastro de Clientes</a></li>
           <li><a href="../pasta_mateus/cadastro_produtos.html">Cadastro de Produtos</a></li>
@@ -67,7 +94,6 @@
 
       <section class="menu-group">
         <h3>Estoque</h3>
-
         <ul>
           <li><a href="../pasta_davi/registro_de_entrada.html">Registro de Entrada</a></li>
           <li><a href="../pasta_davi/relatorio.html">Consulta e Relatório</a></li>
@@ -76,7 +102,6 @@
 
       <section class="menu-group">
         <h3>Pedidos</h3>
-
         <ul>
           <li><a href="../pasta_pedro/registro_pedidos.html">Registro de Pedidos</a></li>
           <li><a href="../pasta_heitor/consulta_de_pedidos.html">Consulta de Pedidos</a></li>
@@ -85,7 +110,6 @@
 
       <section class="menu-group">
         <h3>Vendas</h3>
-
         <ul>
           <li><a href="../pasta_enzo/registro_vendas.html">Registro de Vendas</a></li>
           <li><a href="../pasta_enzo/relatorio_vendas.html">Relatório de Vendas</a></li>
@@ -99,15 +123,11 @@
   <main class="content">
 
     <header class="content-header">
-
-      <h2 id="page-title">
-        Sistema de Gerenciamento
-      </h2>
+      <h2>Sistema de Gerenciamento</h2>
 
       <div class="user-info">
         <img src="./CRUD-removebg-preview.png" width="150" height="100">
       </div>
-
     </header>
 
     <section class="view-container">
@@ -121,6 +141,20 @@
 
 
 <script>
+function mostrarLoginSocio() {
+  document.getElementById("menuInicial").style.display = "none";
+  document.getElementById("loginContainer").style.display = "flex";
+}
+
+function voltarMenuInicial() {
+  document.getElementById("loginContainer").style.display = "none";
+  document.getElementById("menuInicial").style.display = "flex";
+}
+
+function entrarComoCliente() {
+  window.location.href = "../pasta_cliente/index_cliente.html";
+}
+
 function entrarSistema() {
   const usuario = document.getElementById("usuario").value.trim();
   const senha = document.getElementById("senha").value.trim();
@@ -135,21 +169,11 @@ function entrarSistema() {
   document.getElementById("menuSistema").style.display = "flex";
 }
 
-function limparLogin() {
-  document.getElementById("usuario").value = "";
-  document.getElementById("senha").value = "";
-
-  document.getElementById("mensagemLogin").innerText =
-    "Login simulado para protótipo acadêmico.";
-}
-
 function toggleSenha() {
   const input = document.getElementById("senha");
-
   input.type = input.type === "password" ? "text" : "password";
 }
 </script>
 
 </body>
-
 </html>
