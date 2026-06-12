@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Relatório Financeiro</title>
+
+  <link rel="stylesheet" href="../pasta_fabiane/index.css">
+
+  <style>
+    .form-container, .total-box {
+      background: white;
+      padding: 20px;
+      border-radius: 6px;
+      margin-bottom: 25px;
+      border: 1px solid #ddd;
+    }
+
+    .form-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .form-group input,
+    .form-group select {
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .cards-resumo {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 18px;
+    }
+
+    .card h3 {
+      color: #2c3e50;
+      margin-bottom: 8px;
+    }
+
+    .card strong {
+      font-size: 20px;
+      color: #3498db;
+    }
+
+    .empty-message {
+      margin-top: 15px;
+      color: #777;
+    }
+
+    @media print {
+      .sidebar,
+      .content-header,
+      .form-container {
+        display: none;
+      }
+
+      .dashboard-container,
+      .content {
+        display: block;
+      }
+
+      .view-container {
+        padding: 0;
+      }
+
+      body {
+        background: white;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+  <aside class="sidebar">
+    <div class="logo">
+      <h1>CRUD</h1>
+    </div>
+
+    <nav class="menu">
+            <section class="menu-group">
+        <h3>Cadastros</h3>
+        <ul>
+          <li><a href="../pasta_mateus/cadastro_clientes.html">Cadastro de Clientes</a></li>
+          <li><a href="../pasta_mateus/cadastro_produtos.html">Cadastro de Produtos</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Estoque</h3>
+        <ul>
+          <li><a href="../pasta_davi/registro_de_entrada.html">Registro de Entrada</a></li>
+          <li><a href="../pasta_davi/relatorio.html">Consulta e Relatório</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Pedidos</h3>
+        <ul>
+          <li><a href="../pasta_pedro/registro_pedidos.html">Registro de Pedidos</a></li>
+          <li><a href="../pasta_heitor/consulta_de_pedidos.html">Consulta de Pedidos</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Vendas</h3>
+        <ul>
+          <li><a href="../pasta_enzo/registro_vendas.html">Registro de Vendas</a></li>
+          <li><a href="../pasta_enzo/relatorio_financeiro.html">Relatório de Vendas</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Avaliações e Reservas</h3>
+        <ul>
+          <li><a href="../pasta_heitor/relatorio_avaliacoes.html">Relatório de Avaliações</a></li>
+          <li><a href="../pasta_heitor/relatorio_reservas.html">Relatório de Reservas</a></li>
+        </ul>
+      </section>
+    </nav>
+  </aside>
+
+  <main class="content">
+
+    <header class="content-header">
+      <h2>Relatório Financeiro</h2>
+      <div class="user-info">Usuário: Admin</div>
+    </header>
+
+    <section class="view-container">
+
+      <div class="form-container">
+        <h2>Filtros do Relatório</h2>
+
+        <div class="form-group">
+          <select id="tipoRelatorio">
+            <option value="todos">Todos</option>
+            <option value="semanal">Semanal</option>
+            <option value="mensal">Mensal</option>
+          </select>
+
+          <label>De:</label>
+          <input type="date" id="dataInicio">
+
+          <label>Até:</label>
+          <input type="date" id="dataFim">
+
+          <button onclick="filtrar()">Filtrar</button>
+          <button onclick="limparFiltro()">Limpar</button>
+          <button onclick="window.print()">Imprimir</button>
+        </div>
+      </div>
+
+      <div class="cards-resumo">
+        <div class="card">
+          <h3>Entradas</h3>
+          <strong id="entradasTotal">R$ 0,00</strong>
+        </div>
+
+        <div class="card">
+          <h3>Saídas</h3>
+          <strong id="saidasTotal">R$ 0,00</strong>
+        </div>
+
+        <div class="card">
+          <h3>Saldo Total</h3>
+          <strong id="saldoTotal">R$ 0,00</strong>
+        </div>
+
+        <div class="card">
+          <h3>Lucro Estimado</h3>
+          <strong id="lucroTotal">R$ 0,00</strong>
+        </div>
+      </div>
+
+      <h2>Vendas Registradas</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Data</th>
+            <th>Total da Venda</th>
+          </tr>
+        </thead>
+
+        <tbody id="tabelaRelatorio"></tbody>
+      </table>
+
+      <p id="mensagemVazia" class="empty-message"></p>
+
+      <h2>Produtos Vendidos</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Quantidade Vendida</th>
+            <th>Valor Arrecadado</th>
+            <th>Custo Estimado</th>
+            <th>Lucro</th>
+          </tr>
+        </thead>
+
+        <tbody id="resumoProdutos"></tbody>
+      </table>
+
+      <h2>Ingredientes / Estoque Gasto</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Ingrediente / Produto</th>
+            <th>Quantidade Consumida</th>
+          </tr>
+        </thead>
+
+        <tbody id="ingredientesGastos"></tbody>
+      </table>
+
+      <h2>Fluxo de Caixa Diário</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Entradas Diárias</th>
+            <th>Saídas Diárias</th>
+            <th>Saldo Diário</th>
+          </tr>
+        </thead>
+
+        <tbody id="fluxoDiario"></tbody>
+      </table>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script src="mock_vendas.js"></script>
+
+<script>
+let vendas = JSON.parse(localStorage.getItem("vendas"));
+
+if (!vendas) {
+  vendas = typeof mockVendas !== "undefined" ? mockVendas : [];
+  localStorage.setItem("vendas", JSON.stringify(vendas));
+}
+
+vendas = vendas.filter(v => v.origem !== "reserva");
+
+let entradasEstoque =
+  JSON.parse(localStorage.getItem("entradasBar")) || [];
+
+let produtosCadastrados =
+  JSON.parse(localStorage.getItem("produtos")) || [];
+
+function formatarMoeda(valor) {
+  return Number(valor || 0).toFixed(2).replace(".", ",");
+}
+
+function formatarData(data) {
+  if (!data) return "Sem data";
+  return new Date(data + "T00:00:00").toLocaleDateString("pt-BR");
+}
+
+function obterCustoProduto(nome) {
+  const produto = produtosCadastrados.find(p => p.nome === nome);
+  return produto ? Number(produto.preco || 0) : 0;
+}
+
+function filtrarPorPeriodo(lista) {
+  const tipo = document.getElementById("tipoRelatorio").value;
+  const inicio = document.getElementById("dataInicio").value;
+  const fim = document.getElementById("dataFim").value;
+
+  let resultado = [...lista];
+
+  if (inicio && fim) {
+    resultado = resultado.filter(v => {
+      if (!v.data) return false;
+      return v.data >= inicio && v.data <= fim;
+    });
+  }
+
+  if (tipo === "semanal") {
+    const hoje = new Date();
+    const seteDiasAtras = new Date();
+    seteDiasAtras.setDate(hoje.getDate() - 7);
+
+    resultado = resultado.filter(v => {
+      if (!v.data) return false;
+      const dataVenda = new Date(v.data + "T00:00:00");
+      return dataVenda >= seteDiasAtras && dataVenda <= hoje;
+    });
+  }
+
+  if (tipo === "mensal") {
+    const hoje = new Date();
+    const mesAtual = hoje.getMonth();
+    const anoAtual = hoje.getFullYear();
+
+    resultado = resultado.filter(v => {
+      if (!v.data) return false;
+      const dataVenda = new Date(v.data + "T00:00:00");
+      return dataVenda.getMonth() === mesAtual &&
+             dataVenda.getFullYear() === anoAtual;
+    });
+  }
+
+  return resultado;
+}
+
+function render(listaVendas) {
+  const tabela = document.getElementById("tabelaRelatorio");
+  const resumo = document.getElementById("resumoProdutos");
+  const ingredientes = document.getElementById("ingredientesGastos");
+  const fluxo = document.getElementById("fluxoDiario");
+  const mensagem = document.getElementById("mensagemVazia");
+
+  tabela.innerHTML = "";
+  resumo.innerHTML = "";
+  ingredientes.innerHTML = "";
+  fluxo.innerHTML = "";
+
+  if (listaVendas.length === 0) {
+    mensagem.innerText = "Nenhuma venda encontrada.";
+  } else {
+    mensagem.innerText = "";
+  }
+
+  let entradasTotal = 0;
+  let saidasTotal = 0;
+  let lucroTotal = 0;
+
+  let mapaProdutos = {};
+  let mapaFluxo = {};
+
+  listaVendas.forEach(venda => {
+    entradasTotal += Number(venda.total || 0);
+
+    tabela.innerHTML += `
+      <tr>
+        <td>${venda.id}</td>
+        <td>${venda.cliente}</td>
+        <td>${formatarData(venda.data)}</td>
+        <td>R$ ${formatarMoeda(venda.total)}</td>
+      </tr>
+    `;
+
+    if (!mapaFluxo[venda.data]) {
+      mapaFluxo[venda.data] = {
+        entradas: 0,
+        saidas: 0
+      };
+    }
+
+    mapaFluxo[venda.data].entradas += Number(venda.total || 0);
+
+    if (Array.isArray(venda.produtos)) {
+      venda.produtos.forEach(produto => {
+        const qtd = Number(produto.qtd || 0);
+        const valorVenda = Number(produto.preco || 0);
+        const custo = obterCustoProduto(produto.nome);
+        const arrecadado = valorVenda * qtd;
+        const custoTotal = custo * qtd;
+        const lucro = arrecadado - custoTotal;
+
+        lucroTotal += lucro;
+
+        if (!mapaProdutos[produto.nome]) {
+          mapaProdutos[produto.nome] = {
+            qtd: 0,
+            arrecadado: 0,
+            custo: 0,
+            lucro: 0
+          };
+        }
+
+        mapaProdutos[produto.nome].qtd += qtd;
+        mapaProdutos[produto.nome].arrecadado += arrecadado;
+        mapaProdutos[produto.nome].custo += custoTotal;
+        mapaProdutos[produto.nome].lucro += lucro;
+      });
+    }
+  });
+
+  entradasEstoque.forEach(entrada => {
+    saidasTotal += Number(entrada.totalValor || 0);
+
+    if (!mapaFluxo[entrada.dataEntrada]) {
+      mapaFluxo[entrada.dataEntrada] = {
+        entradas: 0,
+        saidas: 0
+      };
+    }
+
+    mapaFluxo[entrada.dataEntrada].saidas += Number(entrada.totalValor || 0);
+  });
+
+  const saldoTotal = entradasTotal - saidasTotal;
+
+  document.getElementById("entradasTotal").innerText =
+    "R$ " + formatarMoeda(entradasTotal);
+
+  document.getElementById("saidasTotal").innerText =
+    "R$ " + formatarMoeda(saidasTotal);
+
+  document.getElementById("saldoTotal").innerText =
+    "R$ " + formatarMoeda(saldoTotal);
+
+  document.getElementById("lucroTotal").innerText =
+    "R$ " + formatarMoeda(lucroTotal);
+
+  for (let produto in mapaProdutos) {
+    resumo.innerHTML += `
+      <tr>
+        <td>${produto}</td>
+        <td>${mapaProdutos[produto].qtd}</td>
+        <td>R$ ${formatarMoeda(mapaProdutos[produto].arrecadado)}</td>
+        <td>R$ ${formatarMoeda(mapaProdutos[produto].custo)}</td>
+        <td>R$ ${formatarMoeda(mapaProdutos[produto].lucro)}</td>
+      </tr>
+    `;
+
+    ingredientes.innerHTML += `
+      <tr>
+        <td>${produto}</td>
+        <td>${mapaProdutos[produto].qtd}</td>
+      </tr>
+    `;
+  }
+
+  Object.keys(mapaFluxo).sort().forEach(data => {
+    const entrada = mapaFluxo[data].entradas;
+    const saida = mapaFluxo[data].saidas;
+    const saldo = entrada - saida;
+
+    fluxo.innerHTML += `
+      <tr>
+        <td>${formatarData(data)}</td>
+        <td>R$ ${formatarMoeda(entrada)}</td>
+        <td>R$ ${formatarMoeda(saida)}</td>
+        <td>R$ ${formatarMoeda(saldo)}</td>
+      </tr>
+    `;
+  });
+}
+
+function filtrar() {
+  const filtradas = filtrarPorPeriodo(vendas);
+  render(filtradas);
+}
+
+function limparFiltro() {
+  document.getElementById("tipoRelatorio").value = "todos";
+  document.getElementById("dataInicio").value = "";
+  document.getElementById("dataFim").value = "";
+
+  render(vendas);
+}
+
+render(vendas);
+</script>
+
+</body>
+</html>
