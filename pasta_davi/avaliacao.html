@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Avaliação</title>
+
+  <link rel="stylesheet" href="../pasta_fabiane/index.css">
+
+  <style>
+    .avaliacao-box {
+      background: white;
+      padding: 25px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      max-width: 700px;
+    }
+
+    .campo {
+      margin-bottom: 20px;
+    }
+
+    .campo label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .campo select,
+    .campo textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .btn-salvar {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-salvar:hover {
+      background-color: #2980b9;
+    }
+  </style>
+
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+  <aside class="sidebar">
+
+    <div class="logo">
+      <h1>Cliente</h1>
+    </div>
+
+    <nav class="menu">
+
+      <section class="menu-group">
+
+        <h3>Área do Cliente</h3>
+
+        <ul>
+          <li><a href="../pasta_enzo/cardapio.html">Cardápio</a></li>
+          <li><a href="../pasta_davi/avaliacao.html">Avaliar Estabelecimento</a></li>
+          <li><a href="../pasta_mateus/cronograma_shows.html">Cronogramas de Shows</a></li>
+          <li><a href="../pasta_pedro/reservas.html">Reservas e Atendimento</a></li>
+          <li><a href="../pasta_fabiane/index.html">Sair</a></li>
+        </ul>
+
+      </section>
+
+    </nav>
+
+  </aside>
+
+  <main class="content">
+
+    <header class="content-header">
+      <h2>Avaliação do Estabelecimento</h2>
+      <div class="user-info">Cliente</div>
+    </header>
+
+    <section class="view-container">
+
+      <div class="avaliacao-box">
+
+        <div class="campo">
+          <label>Qualidade do Atendimento</label>
+
+          <select id="atendimento">
+            <option>⭐ 1</option>
+            <option>⭐ 2</option>
+            <option>⭐ 3</option>
+            <option>⭐ 4</option>
+            <option selected>⭐ 5</option>
+          </select>
+        </div>
+
+        <div class="campo">
+          <label>Qualidade da Comida</label>
+
+          <select id="comida">
+            <option>⭐ 1</option>
+            <option>⭐ 2</option>
+            <option>⭐ 3</option>
+            <option>⭐ 4</option>
+            <option selected>⭐ 5</option>
+          </select>
+        </div>
+
+        <div class="campo">
+          <label>Qualidade do Som</label>
+
+          <select id="som">
+            <option>⭐ 1</option>
+            <option>⭐ 2</option>
+            <option>⭐ 3</option>
+            <option>⭐ 4</option>
+            <option selected>⭐ 5</option>
+          </select>
+        </div>
+
+        <div class="campo">
+          <label>Comentário (opcional)</label>
+
+          <textarea
+            id="comentario"
+            placeholder="Digite seu comentário..."
+          ></textarea>
+        </div>
+
+        <button
+          class="btn-salvar"
+          onclick="salvarAvaliacao()"
+        >
+          Enviar Avaliação
+        </button>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script>
+
+function salvarAvaliacao() {
+
+  let avaliacoes =
+    JSON.parse(localStorage.getItem("avaliacoes")) || [];
+
+  avaliacoes.push({
+
+    atendimento:
+      document.getElementById("atendimento").value,
+
+    comida:
+      document.getElementById("comida").value,
+
+    som:
+      document.getElementById("som").value,
+
+    comentario:
+      document.getElementById("comentario").value
+
+  });
+
+  localStorage.setItem(
+    "avaliacoes",
+    JSON.stringify(avaliacoes)
+  );
+
+  alert("Avaliação enviada com sucesso!");
+
+  document.getElementById("comentario").value = "";
+
+}
+
+</script>
