@@ -1,52 +1,188 @@
-<div class="dashboard-container">
-    <aside class="sidebar">
-        <div class="logo">
-            <h1>CRUD</h1>
-        </div>
-        <link rel="stylesheet" href="index.css">
+<!DOCTYPE html>
+<html lang="pt-br">
 
-        <nav class="menu">
-            <section class="menu-group">
-                <h3>Cadastros</h3>
-                <ul>
-                    <li><a href="/pasta_mateus/cadastro_clientes.html">Cadastro de Clientes</a></li>
-                    <li><a href="/pasta_mateus/cadastro_produtos.html">Cadastro de Produtos</a></li>
-                </ul>
-            </section>
+<head>
+  <meta charset="UTF-8">
+  <title>Sistema CRUD</title>
 
-            <section class="menu-group">
-                <h3>Estoque</h3>
-                <ul>
-                    <li><a href="">Registro de Entrada</a></li>
-                    <li><a href="">Consulta e Relatório</a></li>
-                </ul>
-            </section>
+  <link rel="stylesheet" href="index.css">
+</head>
 
-            <section class="menu-group">
-                <h3>Pedidos</h3>
-                <ul>
-                    <li><a href="/pasta_heitor/consulta_de_pedidos.html">Registro de Pedidos</a></li>
-                    <li><a href="">Consulta de Pedidos</a></li>
-                </ul>
-            </section>
+<body>
 
-            <section class="menu-group">
-                <h3>Vendas</h3>
-                <ul>
-                    <li><a href="/pasta_enzo/registro_vendas.html">Registro de Vendas</a></li>
-                    <li><a href="/pasta_enzo/relatorio_vendas.html">Relatório de Vendas</a></li>
-                </ul>
-            </section>
-        </nav>
-    </aside>
+<section class="login-container" id="menuInicial">
 
-    <main class="content">
-        <header class="content-header">
-            <h2 id="page-title">Cadastro de Clientes</h2>
-            <div class="user-info">Usuário: Admin</div>
-        </header>
+  <div class="login-card">
 
-        <section class="view-container">
-            </section>
-    </main>
+    <img src="./CRUD-removebg-preview.png" width="150" height="100">
+
+    <h1>Sistema CRUD</h1>
+
+    <p>Escolha o tipo de acesso</p>
+
+    <div class="login-actions">
+      <button onclick="entrarComoCliente()">
+        Logar como Cliente
+      </button>
+
+      <button onclick="mostrarLoginSocio()">
+        Logar como Sócio
+      </button>
+    </div>
+
+  </div>
+
+</section>
+
+
+<section class="login-container" id="loginContainer" style="display: none;">
+
+  <div class="login-card">
+
+    <img src="./CRUD-removebg-preview.png" width="150" height="100">
+
+    <h1>Login do Sócio</h1>
+
+    <p>Informe usuário e senha</p>
+
+    <div class="login-group">
+      <label for="usuario">Usuário</label>
+      <input type="text" id="usuario" placeholder="Digite seu usuário">
+    </div>
+
+    <div class="login-group">
+      <label for="senha">Senha</label>
+
+      <div class="senha-container">
+        <input type="password" id="senha" placeholder="Digite sua senha">
+
+        <button type="button" class="toggle-senha" onclick="toggleSenha()">
+          👁
+        </button>
+      </div>
+    </div>
+
+    <div class="login-actions">
+      <button onclick="entrarSistema()">Entrar</button>
+      <button onclick="voltarMenuInicial()">Voltar</button>
+    </div>
+
+    <p id="mensagemLogin" class="mensagem-login"></p>
+
+  </div>
+
+</section>
+
+
+<div class="dashboard-container menu-sistema" id="menuSistema" style="display: none;">
+
+  <aside class="sidebar">
+
+    <div class="logo">
+      <img src="./CRUD-removebg-preview.png" width="150" height="100">
+    </div>
+
+    <nav class="menu">
+
+                  <section class="menu-group">
+        <h3>Cadastros</h3>
+        <ul>
+          <li><a href="../pasta_mateus/cadastro_clientes.html">Cadastro de Clientes</a></li>
+          <li><a href="../pasta_mateus/cadastro_produtos.html">Cadastro de Produtos</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Estoque</h3>
+        <ul>
+          <li><a href="../pasta_davi/registro_de_entrada.html">Registro de Entrada</a></li>
+          <li><a href="../pasta_davi/relatorio.html">Consulta e Relatório</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Pedidos</h3>
+        <ul>
+          <li><a href="../pasta_pedro/registro_pedidos.html">Registro de Pedidos</a></li>
+          <li><a href="../pasta_heitor/consulta_de_pedidos.html">Consulta de Pedidos</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Vendas</h3>
+        <ul>
+          <li><a href="../pasta_enzo/registro_vendas.html">Registro de Vendas</a></li>
+          <li><a href="../pasta_enzo/relatorio_financeiro.html">Relatório de Vendas</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Avaliações e Reservas</h3>
+        <ul>
+          <li><a href="../pasta_heitor/relatorio_avaliacoes.html">Relatório de Avaliações</a></li>
+          <li><a href="../pasta_heitor/relatorio_reservas.html">Relatório de Reservas</a></li>
+        </ul>
+      </section>
+
+    </nav>
+
+  </aside>
+
+  <main class="content">
+
+    <header class="content-header">
+      <h2>Sistema de Gerenciamento</h2>
+
+      <div class="user-info">
+        <img src="./CRUD-removebg-preview.png" width="150" height="100">
+      </div>
+    </header>
+
+    <section class="view-container">
+      <h2>Bem-vindo ao sistema</h2>
+      <p>Selecione uma opção no menu lateral para começar.</p>
+    </section>
+
+  </main>
+
 </div>
+
+
+<script>
+function mostrarLoginSocio() {
+  document.getElementById("menuInicial").style.display = "none";
+  document.getElementById("loginContainer").style.display = "flex";
+}
+
+function voltarMenuInicial() {
+  document.getElementById("loginContainer").style.display = "none";
+  document.getElementById("menuInicial").style.display = "flex";
+}
+
+function entrarComoCliente() {
+  window.location.href = "menu_cliente.html";
+}
+
+function entrarSistema() {
+  const usuario = document.getElementById("usuario").value.trim();
+  const senha = document.getElementById("senha").value.trim();
+
+  if (!usuario || !senha) {
+    document.getElementById("mensagemLogin").innerText =
+      "Preencha usuário e senha para entrar.";
+    return;
+  }
+
+  document.getElementById("loginContainer").style.display = "none";
+  document.getElementById("menuSistema").style.display = "flex";
+}
+
+function toggleSenha() {
+  const input = document.getElementById("senha");
+  input.type = input.type === "password" ? "text" : "password";
+
+}
+</script>
+
+</body>
+</html>

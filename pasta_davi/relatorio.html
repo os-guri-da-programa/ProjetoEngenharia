@@ -3,97 +3,227 @@
 <head>
   <meta charset="UTF-8">
   <title>Relatório de Entradas</title>
+
+  <link rel="stylesheet" href="../pasta_fabiane/index.css">
+
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    h1 { margin-bottom: 10px; }
-    .summary { margin: 15px 0; padding: 10px; border: 1px solid #000; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #000; padding: 8px; text-align: left; }
-    .actions { margin-top: 12px; }
-    button { padding: 8px 12px; cursor: pointer; }
-    .details { margin-top: 8px; font-size: 14px; }
+    .summary {
+      background-color: white;
+      margin: 15px 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .details-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+
+    @media print {
+      .sidebar,
+      .content-header,
+      .actions {
+        display: none;
+      }
+
+      .dashboard-container {
+        display: block;
+      }
+
+      .view-container {
+        padding: 0;
+      }
+    }
   </style>
 </head>
+
 <body>
 
-<h1>Relatório de Entradas</h1>
+<div class="dashboard-container">
 
-<div class="summary" id="summary">Carregando relatório...</div>
+  <aside class="sidebar">
+    <div class="logo">
+      <h1>CRUD</h1>
+    </div>
 
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Fornecedor</th>
-      <th>Data</th>
-      <th>Quantidade Total</th>
-      <th>Valor Total (R$)</th>
-      <th>Detalhes</th>
-    </tr>
-  </thead>
-  <tbody id="relatorioTabela"></tbody>
-</table>
+    <nav class="menu">
+            <section class="menu-group">
+        <h3>Cadastros</h3>
+        <ul>
+          <li><a href="../pasta_mateus/cadastro_clientes.html">Cadastro de Clientes</a></li>
+          <li><a href="../pasta_mateus/cadastro_produtos.html">Cadastro de Produtos</a></li>
+        </ul>
+      </section>
 
-<div class="actions">
-  <button onclick="window.history.back()">Voltar</button>
-  <button onclick="imprimirRelatorio()">Imprimir</button>
+      <section class="menu-group">
+        <h3>Estoque</h3>
+        <ul>
+          <li><a href="../pasta_davi/registro_de_entrada.html">Registro de Entrada</a></li>
+          <li><a href="../pasta_davi/relatorio.html">Consulta e Relatório</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Pedidos</h3>
+        <ul>
+          <li><a href="../pasta_pedro/registro_pedidos.html">Registro de Pedidos</a></li>
+          <li><a href="../pasta_heitor/consulta_de_pedidos.html">Consulta de Pedidos</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Vendas</h3>
+        <ul>
+          <li><a href="../pasta_enzo/registro_vendas.html">Registro de Vendas</a></li>
+          <li><a href="../pasta_enzo/relatorio_financeiro.html">Relatório de Vendas</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Avaliações e Reservas</h3>
+        <ul>
+          <li><a href="../pasta_heitor/relatorio_avaliacoes.html">Relatório de Avaliações</a></li>
+          <li><a href="../pasta_heitor/relatorio_reservas.html">Relatório de Reservas</a></li>
+        </ul>
+      </section>
+    </nav>
+  </aside>
+
+  <main class="content">
+
+    <header class="content-header">
+      <h2>Relatório de Entradas</h2>
+      <div class="user-info">Usuário: Admin</div>
+    </header>
+
+    <section class="view-container">
+
+      <h2>Consulta e Relatório de Entradas</h2>
+
+      <div class="summary" id="summary">
+        Carregando relatório...
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Fornecedor</th>
+            <th>Data</th>
+            <th>Quantidade Total</th>
+            <th>Valor Total (R$)</th>
+            <th>Detalhes</th>
+          </tr>
+        </thead>
+
+        <tbody id="relatorioTabela"></tbody>
+      </table>
+
+      <div class="actions">
+        <button onclick="window.location.href='registro_de_entrada.html'">
+          Voltar para Registro
+        </button>
+
+        <button onclick="imprimirRelatorio()">
+          Imprimir
+        </button>
+      </div>
+
+    </section>
+
+  </main>
+
 </div>
 
 <script src="mock_entradas_bar.js"></script>
+
 <script>
-  function formatCurrency(v) { return v.toFixed(2).replace('.', ','); }
+function formatCurrency(v) {
+  return Number(v).toFixed(2).replace(".", ",");
+}
 
-  const entradas = (typeof mockEntradasBar !== 'undefined' && Array.isArray(mockEntradasBar)) ? mockEntradasBar : [];
+const entradasSalvas = localStorage.getItem("entradasBar");
 
-  function renderRelatorio() {
-    const tabela = document.getElementById('relatorioTabela');
-    const summary = document.getElementById('summary');
-    tabela.innerHTML = '';
+const entradas = entradasSalvas
+  ? JSON.parse(entradasSalvas)
+  : typeof mockEntradasBar !== "undefined" && Array.isArray(mockEntradasBar)
+    ? mockEntradasBar
+    : [];
 
-    if (entradas.length === 0) {
-      summary.innerText = 'Nenhuma entrada registrada.';
-      return;
-    }
+function renderRelatorio() {
+  const tabela = document.getElementById("relatorioTabela");
+  const summary = document.getElementById("summary");
 
-    let somaQtd = 0;
-    let somaValor = 0;
+  tabela.innerHTML = "";
 
-    entradas.forEach(e => {
-      somaQtd += e.totalQtd || 0;
-      somaValor += e.totalValor || 0;
+  if (entradas.length === 0) {
+    summary.innerText = "Nenhuma entrada registrada.";
+    return;
+  }
 
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
+  let somaQtd = 0;
+  let somaValor = 0;
+
+  entradas.forEach(e => {
+    somaQtd += e.totalQtd || 0;
+    somaValor += e.totalValor || 0;
+
+    tabela.innerHTML += `
+      <tr>
         <td>${e.id}</td>
         <td>${e.fornecedor}</td>
-        <td>${new Date(e.dataEntrada).toLocaleDateString('pt-BR')}</td>
+        <td>${new Date(e.dataEntrada + "T00:00:00").toLocaleDateString("pt-BR")}</td>
         <td>${e.totalQtd} un.</td>
-        <td>${formatCurrency(e.totalValor)}</td>
-        <td><button onclick='mostrarDetalhes(${e.id})'>Ver</button></td>
-      `;
-      tabela.appendChild(tr);
-    });
+        <td>R$ ${formatCurrency(e.totalValor)}</td>
+        <td>
+          <button class="details-btn" onclick="mostrarDetalhes(${e.id})">
+            Ver
+          </button>
+        </td>
+      </tr>
+    `;
+  });
 
-    summary.innerHTML = `Entradas: <strong>${entradas.length}</strong> | Quantidade total: <strong>${somaQtd} un.</strong> | Valor total: <strong>R$ ${formatCurrency(somaValor)}</strong>`;
+  summary.innerHTML = `
+    Entradas: <strong>${entradas.length}</strong> |
+    Quantidade total: <strong>${somaQtd} un.</strong> |
+    Valor total: <strong>R$ ${formatCurrency(somaValor)}</strong>
+  `;
+}
+
+function mostrarDetalhes(id) {
+  const e = entradas.find(x => x.id === id);
+
+  if (!e) {
+    alert("Entrada não encontrada.");
+    return;
   }
 
-  function mostrarDetalhes(id) {
-    const e = entradas.find(x => x.id === id);
-    if (!e) return alert('Entrada não encontrada.');
+  let texto = `Fornecedor: ${e.fornecedor}\n`;
+  texto += `Data: ${new Date(e.dataEntrada + "T00:00:00").toLocaleDateString("pt-BR")}\n`;
+  texto += `Quantidade: ${e.totalQtd} un.\n`;
+  texto += `Valor: R$ ${formatCurrency(e.totalValor)}\n\n`;
+  texto += "Produtos:\n";
 
-    let texto = `Fornecedor: ${e.fornecedor}\nData: ${new Date(e.dataEntrada).toLocaleDateString('pt-BR')}\nQuantidade: ${e.totalQtd} un.\nValor: R$ ${formatCurrency(e.totalValor)}\n\nProdutos:\n`;
-    e.produtos.forEach(p => {
-      texto += `- ${p.nome}: ${p.qtd} un. × R$ ${formatCurrency(p.preco)} = R$ ${formatCurrency(p.total)}\n`;
-    });
+  e.produtos.forEach(p => {
+    texto += `- ${p.nome}: ${p.qtd} un. × R$ ${formatCurrency(p.preco)} = R$ ${formatCurrency(p.total)}\n`;
+  });
 
-    alert(texto);
-  }
+  alert(texto);
+}
 
-  function imprimirRelatorio() {
-    window.print();
-  }
+function imprimirRelatorio() {
+  window.print();
+}
 
-  renderRelatorio();
+renderRelatorio();
 </script>
 
 </body>

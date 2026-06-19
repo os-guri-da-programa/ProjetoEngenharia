@@ -1,6 +1,4 @@
-/*css*/
-
-/* Reset básico para remover margens padrão */
+/* RESET */
 * {
     margin: 0;
     padding: 0;
@@ -8,40 +6,56 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+
+/* BODY */
 body {
-    background-color: #f4f7f6;
+    background-color: rgb(255, 255, 255);
 }
 
-/* Container principal que segura o Menu e o Conteúdo */
+
+/* CONTAINER PRINCIPAL */
 .dashboard-container {
     display: flex;
     min-height: 100vh;
 }
 
-/* --- BARRA LATERAL (SIDEBAR) --- */
+
+/* =========================
+   SIDEBAR
+========================= */
+
 .sidebar {
     width: 260px;
-    background-color: #2c3e50;
+    min-width: 260px;
+    background-color: #5c315e;
     color: white;
     padding: 20px;
     display: flex;
     flex-direction: column;
 }
 
+
+/* LOGO */
+
 .logo {
     text-align: center;
     padding-bottom: 20px;
-    border-bottom: 1px solid #34495e;
+    border-bottom: 1px solid #5e3451;
     margin-bottom: 20px;
+
 }
 
-.logo h1 {
-    font-size: 24px;
-    letter-spacing: 2px;
-    color: #3498db;
+
+
+
+/* =========================
+   MENU
+========================= */
+
+.menu {
+    width: 100%;
 }
 
-/* Estilização dos Grupos de Menu */
 .menu-group {
     margin-bottom: 25px;
 }
@@ -49,7 +63,7 @@ body {
 .menu-group h3 {
     text-transform: uppercase;
     font-size: 12px;
-    color: #95a5a6;
+    color: rgb(232, 145, 240);
     margin-bottom: 10px;
     padding-left: 10px;
 }
@@ -62,37 +76,49 @@ body {
     margin-bottom: 5px;
 }
 
+
+/* LINKS */
+
 .menu ul li a {
     color: #ecf0f1;
     text-decoration: none;
     display: block;
+    width: 100%;
     padding: 10px;
     border-radius: 4px;
-    transition: background 0.3s;
+    transition: 0.3s;
     font-size: 14px;
 }
 
-/* Efeito ao passar o mouse nos links */
+
+/* HOVER */
+
 .menu ul li a:hover {
     background-color: #34495e;
     color: #3498db;
 }
 
-/* --- ÁREA DE CONTEÚDO PRINCIPAL --- */
+
+/* =========================
+   CONTEÚDO PRINCIPAL
+========================= */
+
 .content {
-    flex: 1; /* Ocupa todo o resto da tela */
+    flex: 1;
     display: flex;
     flex-direction: column;
 }
 
-/* Cabeçalho superior */
+
+/* HEADER */
+
 .content-header {
-    background-color: white;
+    background-color: rgb(243, 208, 247);
     padding: 15px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .content-header h2 {
@@ -105,8 +131,200 @@ body {
     font-weight: 500;
 }
 
-/* Espaço onde ficarão suas tabelas e formulários */
+
+/* ÁREA DAS PÁGINAS */
+
 .view-container {
     padding: 30px;
     flex: 1;
 }
+
+
+/* =========================
+   FORMULÁRIOS
+========================= */
+
+input,
+select,
+textarea,
+button {
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+
+/* BOTÕES */
+
+button {
+    background-color: rgb(180, 85, 189);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: rgb(232, 145, 240);
+}
+
+
+/* TABELAS */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: rgb(252, 252, 252);
+}
+
+table th,
+table td {
+    border: 1px solid rgb(243, 208, 247);
+    padding: 12px;
+    text-align: left;
+}
+
+table th {
+    background-color: rgb(255, 255, 255);
+}
+
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 768px) {
+
+    .dashboard-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .content-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+}
+
+/* LOGIN */
+
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f4f7f6;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: white;
+      width: 100%;
+      max-width: 420px;
+      padding: 30px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      text-align: center;
+    }
+
+    .login-card img {
+      margin-bottom: 10px;
+    }
+
+    .login-card h1 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+
+    .login-card p {
+      color: #666;
+      margin-bottom: 25px;
+    }
+
+    .login-group {
+      text-align: left;
+      margin-bottom: 15px;
+    }
+
+    .login-group label {
+      display: block;
+      margin-bottom: 6px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .login-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .senha-container {
+      position: relative;
+    }
+
+    .senha-container input {
+      padding-right: 45px;
+    }
+
+    .toggle-senha {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 18px;
+      color: #555;
+      outline: none;
+      box-shadow: none;
+      padding: 6px;
+    }
+
+    .toggle-senha:hover,
+    .toggle-senha:focus,
+    .toggle-senha:active {
+      background-color: rgba(0, 0, 0, 0.06);
+      border-radius: 50%;
+      outline: none;
+      box-shadow: none;
+    }
+
+    .login-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .login-actions button {
+      flex: 1;
+      padding: 12px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .login-actions button:hover {
+      background-color: #2980b9;
+    }
+
+    .mensagem-login {
+      margin-top: 15px;
+      color: #777;
+      font-size: 14px;
+    }
+
+    .menu-sistema {
+      display: none;
+    }

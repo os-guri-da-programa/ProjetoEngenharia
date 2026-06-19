@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Reservas e Atendimento</title>
+
+  <link rel="stylesheet" href="../pasta_fabiane/index.css">
+
+  <style>
+
+    .reserva-card {
+      background: white;
+      padding: 25px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      max-width: 800px;
+    }
+
+    .campo {
+      margin-bottom: 15px;
+    }
+
+    .campo label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    .campo input,
+    .campo select,
+    .campo textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .telefone-box {
+      background: #ecf0f1;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 25px;
+      font-size: 18px;
+    }
+
+    .btn-reservar {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-reservar:hover {
+      background: #2980b9;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+  <aside class="sidebar">
+
+    <div class="logo">
+      <h1>Cliente</h1>
+    </div>
+
+    <nav class="menu">
+
+      <section class="menu-group">
+
+        <h3>Área do Cliente</h3>
+
+        <ul>
+          <li><a href="../pasta_enzo/cardapio.html">Cardápio</a></li>
+          <li><a href="../pasta_davi/avaliacao.html">Avaliar Estabelecimento</a></li>
+          <li><a href="../pasta_mateus/cronograma_shows.html">Cronogramas de Shows</a></li>
+          <li><a href="../pasta_pedro/reservas.html">Reservas e Atendimento</a></li>
+          <li><a href="../pasta_fabiane/index.html">Sair</a></li>
+        </ul>
+
+      </section>
+
+    </nav>
+
+  </aside>
+
+  <main class="content">
+
+    <header class="content-header">
+      <h2>Reservas e Atendimento</h2>
+      <div class="user-info">Cliente</div>
+    </header>
+
+    <section class="view-container">
+
+      <div class="reserva-card">
+
+        <div class="telefone-box">
+          📞 Atendimento: (49) 3333-4444
+        </div>
+
+        <div class="campo">
+
+          <label>Tipo de Reserva</label>
+
+          <select id="tipoReserva">
+            <option>Mesa</option>
+            <option>Local para Evento</option>
+          </select>
+
+        </div>
+
+        <div class="campo">
+
+          <label>Nome</label>
+
+          <input
+            type="text"
+            id="nome"
+            placeholder="Digite seu nome"
+          >
+
+        </div>
+
+        <div class="campo">
+
+          <label>Telefone</label>
+
+          <input
+            type="text"
+            id="telefone"
+            placeholder="Digite seu telefone"
+          >
+
+        </div>
+
+        <div class="campo">
+
+          <label>Data</label>
+
+          <input
+            type="date"
+            id="dataReserva"
+          >
+
+        </div>
+
+        <div class="campo">
+
+          <label>Observações</label>
+
+          <textarea
+            id="observacoes"
+            placeholder="Informações adicionais..."
+          ></textarea>
+
+        </div>
+
+        <button
+          class="btn-reservar"
+          onclick="salvarReserva()"
+        >
+          Solicitar Reserva
+        </button>
+
+            </div>
+
+      <h2>Minhas Reservas</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Tipo</th>
+            <th>Nome</th>
+            <th>Data</th>
+            <th>Status</th>
+            <th>Pagamento</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+
+        <tbody id="minhasReservas"></tbody>
+      </table>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script>
+document.getElementById("dataReserva").valueAsDate = new Date();
+
+let reservas = JSON.parse(localStorage.getItem("reservas")) || [];
+
+function salvarReserva() {
+  const nome = document.getElementById("nome").value.trim();
+  const telefone = document.getElementById("telefone").value.trim();
+
+  if (!nome || !telefone) {
+    alert("Preencha nome e telefone.");
+    return;
+  }
+
+  reservas.push({
+    id: reservas.length > 0
+      ? Math.max(...reservas.map(r => Number(r.id || 0))) + 1
+      : 1,
+
+    tipo: document.getElementById("tipoReserva").value,
+    nome,
+    telefone,
+    data: document.getElementById("dataReserva").value,
+    observacoes: document.getElementById("observacoes").value,
+    status: "Reservada",
+    pagamento: "Pendente"
+  });
+
+  localStorage.setItem("reservas", JSON.stringify(reservas));
+
+  alert("Reserva solicitada com sucesso! Pagamento pendente.");
+
+  limparFormulario();
+  renderReservasCliente();
+}
+
+function limparFormulario() {
+  document.getElementById("nome").value = "";
+  document.getElementById("telefone").value = "";
+  document.getElementById("observacoes").value = "";
+  document.getElementById("dataReserva").valueAsDate = new Date();
+}
+
+function renderReservasCliente() {
+  const lista = document.getElementById("minhasReservas");
+
+  if (!lista) return;
+
+  lista.innerHTML = "";
+
+  if (reservas.length === 0) {
+    lista.innerHTML = "<p>Nenhuma reserva cadastrada.</p>";
+    return;
+  }
+
+  reservas.forEach(r => {
+    lista.innerHTML += `
+      <tr>
+        <td>${r.id}</td>
+        <td>${r.tipo}</td>
+        <td>${r.nome}</td>
+        <td>${r.data}</td>
+        <td>${r.status}</td>
+        <td>${r.pagamento}</td>
+        <td>
+          <button onclick="abrirPagamento(${r.id})">Pagar</button>
+          <button onclick="cancelarReserva(${r.id})">Cancelar</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+function cancelarReserva(id) {
+  const reserva = reservas.find(r => r.id === id);
+
+  if (!reserva) return;
+
+  if (confirm("Deseja cancelar esta reserva?")) {
+    reserva.status = "Cancelada";
+
+    localStorage.setItem("reservas", JSON.stringify(reservas));
+
+    alert("Reserva cancelada com sucesso!");
+
+    renderReservasCliente();
+  }
+}
+
+function abrirPagamento(id) {
+  const reserva = reservas.find(r => r.id === id);
+
+  if (!reserva) return;
+
+  if (reserva.status === "Cancelada") {
+    alert("Não é possível pagar uma reserva cancelada.");
+    return;
+  }
+
+  const opcao = prompt(
+    "Pagamento fictício\n\n" +
+    "Escolha uma opção:\n" +
+    "1 - Pix\n" +
+    "2 - Cartão de Crédito\n" +
+    "3 - Cartão de Débito\n" +
+    "4 - Dinheiro no local"
+  );
+
+  if (!opcao) return;
+
+  if (["1", "2", "3", "4"].includes(opcao)) {
+    reserva.pagamento = "Pago";
+
+    localStorage.setItem("reservas", JSON.stringify(reservas));
+
+    alert("Pagamento registrado com sucesso!");
+
+    renderReservasCliente();
+  } else {
+    alert("Opção inválida.");
+  }
+}
+
+renderReservasCliente();
+</script>
+
+</body>
+</html>

@@ -3,179 +3,339 @@
 <head>
   <meta charset="UTF-8">
   <title>Registro de Entrada de Produtos</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
 
-    h1, h2 {
-      margin-top: 20px;
+  <link rel="stylesheet" href="../pasta_fabiane/index.css">
+
+  <style>
+    .form-container {
+      background-color: rgb(243, 208, 247);
+      padding: 20px;
+      border-radius: 6px;
+      margin-bottom: 25px;
+      border: 1px solid #ddd;
     }
 
     .form-group {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
       margin-bottom: 15px;
+      align-items: center;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .actions {
       display: flex;
       gap: 10px;
-      flex-wrap: wrap;
-      align-items: flex-end;
+      margin-top: 15px;
     }
 
-    input, button, select {
-      padding: 8px 10px;
-      border: 1px solid #000;
-      font-size: 14px;
-      margin: 5px;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    ul#listaProdutos {
+    #listaProdutos {
       list-style: none;
       padding: 0;
       margin: 15px 0;
     }
 
-    ul#listaProdutos li {
-      padding: 10px;
-      margin: 5px 0;
-      border: 1px solid #000;
+    #listaProdutos li {
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .remove-btn {
-      padding: 4px 8px;
-      font-size: 12px;
-    }
-
     .total-info {
-      padding: 10px;
-      border: 1px solid #000;
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 15px;
       margin: 15px 0;
+      color: #2c3e50;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
+    select {
+      color: #333;
     }
 
-    th, td {
-      border: 1px solid #000;
-      padding: 12px;
-      text-align: left;
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap;
-    }
-
-    .action-buttons button {
-      padding: 4px 8px;
-      font-size: 12px;
-      margin: 0;
-    }
-
-    .form-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .form-row input {
-      flex: 1;
-      min-width: 150px;
+    select:invalid {
+      color: #777;
     }
   </style>
 </head>
+
 <body>
 
-<h1>Registro de Entrada de Produtos</h1>
+<div class="dashboard-container">
 
-  <h2>Dados da Entrada</h2>
-  
-  <div class="form-group">
-    <label for="fornecedor">Fornecedor:</label>
-    <input type="text" id="fornecedor" placeholder="Nome do fornecedor" style="flex: 1; min-width: 200px;">
-    
-    <label for="dataEntrada">Data da Entrada:</label>
-    <input type="date" id="dataEntrada" style="min-width: 150px;">
-  </div>
+  <aside class="sidebar">
+    <div class="logo">
+      <h1>CRUD</h1>
+    </div>
 
-  <h2>Adicionar Produtos</h2>
-  
-  <div class="form-row">
-    <input type="text" id="produto" placeholder="Nome do Produto" style="flex: 2;">
-    <input type="number" id="quantidade" placeholder="Quantidade" min="1" style="flex: 1;">
-    <input type="number" id="precoUnitario" placeholder="Preço Unitário" min="0.01" step="0.01" style="flex: 1;">
-    <button onclick="adicionarProduto()" style="margin: 0;">+ Adicionar</button>
-  </div>
+    <nav class="menu">
+            <section class="menu-group">
+        <h3>Cadastros</h3>
+        <ul>
+          <li><a href="../pasta_mateus/cadastro_clientes.html">Cadastro de Clientes</a></li>
+          <li><a href="../pasta_mateus/cadastro_produtos.html">Cadastro de Produtos</a></li>
+        </ul>
+      </section>
 
-  <h2>Produtos da Entrada</h2>
-  
-  <ul id="listaProdutos"></ul>
+      <section class="menu-group">
+        <h3>Estoque</h3>
+        <ul>
+          <li><a href="../pasta_davi/registro_de_entrada.html">Registro de Entrada</a></li>
+          <li><a href="../pasta_davi/relatorio.html">Consulta e Relatório</a></li>
+        </ul>
+      </section>
 
-  <div id="totalInfo" class="total-info" style="display: none;"></div>
+      <section class="menu-group">
+        <h3>Pedidos</h3>
+        <ul>
+          <li><a href="../pasta_pedro/registro_pedidos.html">Registro de Pedidos</a></li>
+          <li><a href="../pasta_heitor/consulta_de_pedidos.html">Consulta de Pedidos</a></li>
+        </ul>
+      </section>
 
-  <div class="form-group">
-    <button onclick="salvarEntrada()">Salvar Entrada</button>
-    <button onclick="limparFormulario()">Limpar</button>
-    <button onclick="window.location.href='relatorio.html'">Ver Relatório</button>
-  </div>
+      <section class="menu-group">
+        <h3>Vendas</h3>
+        <ul>
+          <li><a href="../pasta_enzo/registro_vendas.html">Registro de Vendas</a></li>
+          <li><a href="../pasta_enzo/relatorio_financeiro.html">Relatório de Vendas</a></li>
+        </ul>
+      </section>
 
-  <h2>Entradas Registradas</h2>
+      <section class="menu-group">
+        <h3>Avaliações e Reservas</h3>
+        <ul>
+          <li><a href="../pasta_heitor/relatorio_avaliacoes.html">Relatório de Avaliações</a></li>
+          <li><a href="../pasta_heitor/relatorio_reservas.html">Relatório de Reservas</a></li>
+        </ul>
+      </section>
+    </nav>
+  </aside>
 
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Fornecedor</th>
-        <th>Data da Entrada</th>
-        <th>Quantidade Total</th>
-        <th>Valor Total</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody id="tabelaEntradas"></tbody>
-  </table>
+  <main class="content">
+
+    <header class="content-header">
+      <h2>Registro de Entrada de Produtos</h2>
+      <div class="user-info">Usuário: Admin</div>
+    </header>
+
+    <section class="view-container">
+
+      <div class="form-container">
+
+      <h2>Dados da Entrada</h2>
+
+      <div class="form-group">
+        <input type="text" id="fornecedor" placeholder="Nome do fornecedor">
+
+        <input type="date" id="dataEntrada">
+      </div>
+
+      <h2>Adicionar Produtos</h2>
+
+      <div class="form-group">
+        <select id="produto" onchange="verificarProdutoNovo()" required>
+  <option value="" disabled selected>Selecione um produto</option>
+  <option value="novo">+ Cadastrar novo produto</option>
+</select>
+        <input
+          type="text"
+          id="novoProduto"
+          placeholder="Nome do novo produto"
+          style="display: none; flex: 2;"
+        >
+
+        <select id="tipoProduto" style="display: none;">
+          <option value="" disabled selected>Tipo do produto</option>
+          <option value="Bebida">Bebida</option>
+          <option value="Drink">Drink</option>
+          <option value="Hambúrguer">Hambúrguer</option>
+          <option value="Porção">Porção</option>
+        </select>
+
+        <input type="number" id="quantidade" placeholder="Quantidade" min="1">
+        <input type="date" id="validadeProduto"style="flex: 1;">
+        <input type="number" id="precoUnitario" placeholder="Preço Unitário" min="0.01" step="0.01">
+
+        <button onclick="adicionarProduto()">+ Adicionar</button>
+      </div>
+
+      <h2>Produtos da Entrada</h2>
+
+      <ul id="listaProdutos"></ul>
+
+      <div id="totalInfo" class="total-info" style="display: none;"></div>
+
+      <div class="form-group">
+        <button onclick="salvarEntrada()">Salvar Entrada</button>
+        <button onclick="limparFormulario()">Limpar</button>
+        <button onclick="window.location.href='relatorio.html'">Ver Relatório</button>
+        </div>
+      </div>
+
+      <h2>Entradas Registradas</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Fornecedor</th>
+            <th>Data da Entrada</th>
+            <th>Quantidade Total</th>
+            <th>Valor Total</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+
+        <tbody id="tabelaEntradas"></tbody>
+      </table>
+
+    </section>
+
+  </main>
+
+</div>
 
 <script src="mock_entradas_bar.js"></script>
+
 <script>
 let entradas = [];
 let produtosTemp = [];
 let editandoId = null;
 
-if (typeof mockEntradasBar !== 'undefined' && Array.isArray(mockEntradasBar)) {
+const entradasSalvas = localStorage.getItem("entradasBar");
+
+if (entradasSalvas) {
+
+  entradas = JSON.parse(entradasSalvas);
+
+} else if (
+  typeof mockEntradasBar !== "undefined" &&
+  Array.isArray(mockEntradasBar)
+) {
+
   entradas = [...mockEntradasBar];
-  renderTabela();
+
+  localStorage.setItem(
+    "entradasBar",
+    JSON.stringify(entradas)
+  );
+
+}
+
+renderTabela();
+
+function carregarProdutosEntrada() {
+  const produtosCadastrados =
+    JSON.parse(localStorage.getItem("produtos")) || [];
+
+  const select = document.getElementById("produto");
+
+  select.innerHTML = `
+    <option value="" disabled selected>Selecione um produto</option>
+    <option value="novo">+ Cadastrar novo produto</option>
+  `;
+
+  produtosCadastrados.forEach(produto => {
+    select.innerHTML += `
+      <option
+        value="${produto.nome}"
+        data-preco="${produto.preco}"
+      >
+        ${produto.nome}
+      </option>
+    `;
+  });
+}
+
+function verificarProdutoNovo() {
+  const produto = document.getElementById("produto").value;
+  const novoProduto = document.getElementById("novoProduto");
+  const precoUnitario = document.getElementById("precoUnitario");
+
+  if (produto === "novo") {
+    document.getElementById("tipoProduto").style.display = "block";
+    document.getElementById("tipoProduto").required = true;
+    novoProduto.style.display = "block";
+    novoProduto.required = true;
+    precoUnitario.value = "";
+  } else {
+    document.getElementById("tipoProduto").style.display = "none";
+    document.getElementById("tipoProduto").required = false;
+    document.getElementById("tipoProduto").value = "";
+    novoProduto.style.display = "none";
+    novoProduto.required = false;
+    novoProduto.value = "";
+
+    const option = document.getElementById("produto").options[
+      document.getElementById("produto").selectedIndex
+    ];
+
+    precoUnitario.value = option.getAttribute("data-preco") || "";
+  }
 }
 
 function adicionarProduto() {
-  const nome = document.getElementById("produto").value.trim();
+  const produtoSelecionado = document.getElementById("produto").value;
+  const nomeNovo = document.getElementById("novoProduto").value.trim();
+  const validade = document.getElementById("validadeProduto").value;
+  const tipoProduto = document.getElementById("tipoProduto").value;
+
+  const nome =
+    produtoSelecionado === "novo"
+      ? nomeNovo
+      : produtoSelecionado;
+
   const qtd = parseInt(document.getElementById("quantidade").value);
   const preco = parseFloat(document.getElementById("precoUnitario").value);
 
-  if (!nome || !qtd || !preco || qtd <= 0 || preco <= 0) {
-    return alert("Preencha todos os campos do produto com valores válidos");
+  if (
+    !nome ||
+    isNaN(qtd) ||
+    isNaN(preco) ||
+    qtd <= 0 ||
+    preco <= 0 ||
+    (produtoSelecionado === "novo" && !tipoProduto)
+  ) {
+
+    alert(
+      "Preencha produto, tipo, quantidade e preço com valores válidos."
+    );
+
+    return;
   }
 
   const total = qtd * preco;
 
-  produtosTemp.push({ nome, qtd, preco, total });
+  produtosTemp.push({
+    nome,
+    qtd,
+    tipoProduto,
+    validade,
+    preco,
+    total,
+    novo: produtoSelecionado === "novo"
+  });
 
   renderProdutosTemp();
   atualizarTotal();
 
   document.getElementById("produto").value = "";
+  document.getElementById("novoProduto").value = "";
+  document.getElementById("novoProduto").style.display = "none";
   document.getElementById("quantidade").value = "";
   document.getElementById("precoUnitario").value = "";
-  document.getElementById("produto").focus();
 }
 
 function renderProdutosTemp() {
@@ -185,10 +345,9 @@ function renderProdutosTemp() {
   produtosTemp.forEach((p, index) => {
     lista.innerHTML += `
       <li>
-        <div>
-          <strong>${p.nome}</strong> - ${p.qtd} un. × R$ ${p.preco.toFixed(2)} = <strong>R$ ${p.total.toFixed(2)}</strong>
-        </div>
-        <button class="remove-btn" onclick="removerProduto(${index})">Remover</button>
+        <strong>${p.nome}</strong> - ${p.qtd} un. × R$ ${p.preco.toFixed(2)}
+        = <strong>R$ ${p.total.toFixed(2)}</strong>
+        <button onclick="removerProduto(${index})">Remover</button>
       </li>
     `;
   });
@@ -202,7 +361,7 @@ function removerProduto(index) {
 
 function atualizarTotal() {
   const totalInfo = document.getElementById("totalInfo");
-  
+
   if (produtosTemp.length === 0) {
     totalInfo.style.display = "none";
     return;
@@ -210,7 +369,7 @@ function atualizarTotal() {
 
   let totalQtd = 0;
   let totalValor = 0;
-  
+
   produtosTemp.forEach(p => {
     totalQtd += p.qtd;
     totalValor += p.total;
@@ -221,41 +380,77 @@ function atualizarTotal() {
 }
 
 function salvarEntrada() {
-  const fornecedor = document.getElementById("fornecedor").value.trim();
-  const dataEntrada = document.getElementById("dataEntrada").value;
+
+  const fornecedor =
+    document.getElementById("fornecedor").value.trim();
+
+  const dataEntrada =
+    document.getElementById("dataEntrada").value;
 
   if (!fornecedor || !dataEntrada || produtosTemp.length === 0) {
-    return alert("Preencha fornecedor, data da entrada e adicione produtos");
+
+    alert(
+      "Preencha fornecedor, data da entrada e adicione pelo menos um produto."
+    );
+
+    return;
   }
 
   let totalQtd = 0;
   let totalValor = 0;
+
   produtosTemp.forEach(p => {
+
     totalQtd += p.qtd;
     totalValor += p.total;
+
   });
 
   if (editandoId !== null) {
-    const entrada = entradas.find(e => e.id === editandoId);
+
+    const entrada =
+      entradas.find(e => e.id === editandoId);
+
     entrada.fornecedor = fornecedor;
     entrada.dataEntrada = dataEntrada;
     entrada.produtos = [...produtosTemp];
     entrada.totalQtd = totalQtd;
     entrada.totalValor = totalValor;
+
     editandoId = null;
+
+    localStorage.setItem("entradasBar", JSON.stringify(entradas));
+
+    alert("Entrada atualizada com sucesso!");
+
   } else {
+
     entradas.push({
-      id: Date.now(),
+
+      id: entradas.length + 1,
+
       fornecedor,
       dataEntrada,
+
       produtos: [...produtosTemp],
+
       totalQtd,
       totalValor
+
     });
+
+    localStorage.setItem("entradasBar", JSON.stringify(entradas));
+
+    alert("Entrada registrada com sucesso!");
+
   }
 
+  atualizarEstoqueComEntrada();
+
   limparFormulario();
+
   renderTabela();
+
 }
 
 function renderTabela() {
@@ -267,16 +462,20 @@ function renderTabela() {
       <tr>
         <td>${e.id}</td>
         <td>${e.fornecedor}</td>
-        <td>${new Date(e.dataEntrada).toLocaleDateString('pt-BR')}</td>
+        <td>${new Date(e.dataEntrada + "T00:00:00").toLocaleDateString("pt-BR")}</td>
         <td>${e.totalQtd} un.</td>
         <td>R$ ${e.totalValor.toFixed(2)}</td>
         <td>
-          <div class="action-buttons">
-            <button onclick="verDetalhes(${e.id})">Detalhes</button>
-            <button onclick="editarEntrada(${e.id})">Editar</button>
-            <button onclick="deletarEntrada(${e.id})">Excluir</button>
-          </div>
-        </td>
+  <button onclick="verDetalhes(${e.id})">Detalhes</button>
+
+  <button onclick="editarEntrada(${e.id})">
+    Editar
+  </button>
+
+  <button onclick="deletarEntrada(${e.id})">
+    Excluir
+  </button>
+</td>
       </tr>
     `;
   });
@@ -286,7 +485,7 @@ function verDetalhes(id) {
   const entrada = entradas.find(e => e.id === id);
 
   let texto = `Fornecedor: ${entrada.fornecedor}\n`;
-  texto += `Data da Entrada: ${new Date(entrada.dataEntrada).toLocaleDateString('pt-BR')}\n`;
+  texto += `Data: ${new Date(entrada.dataEntrada + "T00:00:00").toLocaleDateString("pt-BR")}\n`;
   texto += `Quantidade Total: ${entrada.totalQtd} un.\n`;
   texto += `Valor Total: R$ ${entrada.totalValor.toFixed(2)}\n\nProdutos:\n`;
 
@@ -298,41 +497,96 @@ function verDetalhes(id) {
 }
 
 function editarEntrada(id) {
+
   const entrada = entradas.find(e => e.id === id);
 
-  document.getElementById("fornecedor").value = entrada.fornecedor;
-  document.getElementById("dataEntrada").value = entrada.dataEntrada;
-  produtosTemp = JSON.parse(JSON.stringify(entrada.produtos));
+  document.getElementById("fornecedor").value =
+    entrada.fornecedor;
+
+  document.getElementById("dataEntrada").value =
+    entrada.dataEntrada;
+
+  produtosTemp =
+    JSON.parse(JSON.stringify(entrada.produtos));
+
   editandoId = id;
 
   renderProdutosTemp();
+
   atualizarTotal();
-  
+
   window.scrollTo(0, 0);
-  document.getElementById("produto").focus();
+
 }
 
 function deletarEntrada(id) {
   if (confirm("Tem certeza que deseja excluir esta entrada?")) {
     entradas = entradas.filter(e => e.id !== id);
     renderTabela();
+    alert("Entrada excluída com sucesso!");
   }
+}
+
+function atualizarEstoqueComEntrada() {
+  let produtosCadastrados =
+    JSON.parse(localStorage.getItem("produtos")) || [];
+
+  produtosTemp.forEach(item => {
+    const produtoExistente = produtosCadastrados.find(
+      p => p.nome === item.nome
+    );
+
+    if (produtoExistente) {
+      produtoExistente.quantidade =
+        Number(produtoExistente.quantidade) + Number(item.qtd);
+
+        if (item.validade) {
+          produtoExistente.validade = item.validade;
+        }
+
+      produtoExistente.preco = item.preco;
+    } else {
+      produtosCadastrados.push({
+        nome: item.nome,
+        validade: item.validade,
+        preco: item.preco,
+        quantidade: item.qtd,
+        tipoCusto: item.tipoProduto,
+        venda: item.preco
+      });
+    }
+  });
+
+  localStorage.setItem("produtos", JSON.stringify(produtosCadastrados));
 }
 
 function limparFormulario() {
   document.getElementById("fornecedor").value = "";
-  document.getElementById("dataEntrada").value = "";
   document.getElementById("produto").value = "";
   document.getElementById("quantidade").value = "";
+  document.getElementById("validadeProduto").value = "";
   document.getElementById("precoUnitario").value = "";
+  document.getElementById("tipoProduto").value = "";
+  document.getElementById("tipoProduto").style.display = "none";
+  document.getElementById("tipoProduto").required = false;
+
   produtosTemp = [];
-  editandoId = null;
+
   renderProdutosTemp();
   atualizarTotal();
+
+  document.getElementById("dataEntrada").valueAsDate = new Date();
+
+  document.getElementById("novoProduto").value = "";
+  document.getElementById("novoProduto").style.display = "none";
+
+  carregarProdutosEntrada();
 }
 
-// Inicializar data de hoje
 document.getElementById("dataEntrada").valueAsDate = new Date();
+
+carregarProdutosEntrada();
+
 </script>
 
 </body>
