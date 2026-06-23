@@ -1,0 +1,248 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Relatório de Avaliações</title>
+
+  <link rel="stylesheet" href="../pasta_fabiane/index.css">
+
+  <style>
+    .form-container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 6px;
+      margin-bottom: 25px;
+      border: 1px solid #ddd;
+    }
+
+    .form-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .form-group select {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .summary {
+      background: white;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    .empty-message {
+      margin-top: 15px;
+      color: #777;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+  <aside class="sidebar">
+    <div class="logo">
+      <h1>CRUD</h1>
+    </div>
+
+    <nav class="menu">
+      <section class="menu-group">
+        <h3>Cadastros</h3>
+        <ul>
+          <li><a href="../pasta_mateus/cadastro_clientes.html">Cadastro de Clientes</a></li>
+          <li><a href="../pasta_mateus/cadastro_produtos.html">Cadastro de Produtos</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Estoque</h3>
+        <ul>
+          <li><a href="../pasta_davi/registro_de_entrada.html">Registro de Entrada</a></li>
+          <li><a href="../pasta_davi/relatorio.html">Consulta e Relatório</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Pedidos</h3>
+        <ul>
+          <li><a href="../pasta_pedro/registro_pedidos.html">Registro de Pedidos</a></li>
+          <li><a href="../pasta_heitor/consulta_de_pedidos.html">Consulta de Pedidos</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Vendas</h3>
+        <ul>
+          <li><a href="../pasta_enzo/registro_vendas.html">Registro de Vendas</a></li>
+          <li><a href="../pasta_enzo/relatorio_financeiro.html">Relatório de Vendas</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Avaliações e Reservas</h3>
+        <ul>
+          <li><a href="../pasta_heitor/relatorio_avaliacoes.html">Relatório de Avaliações</a></li>
+          <li><a href="../pasta_heitor/relatorio_reservas.html">Relatório de Reservas</a></li>
+        </ul>
+      </section>
+    </nav>
+  </aside>
+
+  <main class="content">
+
+    <header class="content-header">
+      <h2>Relatório de Avaliações</h2>
+      <div class="user-info">Usuário: Admin</div>
+    </header>
+
+    <section class="view-container">
+
+      <div class="form-container">
+        <div class="form-group">
+          <select id="filtroTipo">
+            <option value="todos">Todas as avaliações</option>
+            <option value="atendimento">Atendimento</option>
+            <option value="comida">Comida</option>
+            <option value="som">Som</option>
+          </select>
+
+          <select id="filtroNota">
+            <option value="todos">Todas as notas</option>
+            <option value="⭐ 1">⭐ 1</option>
+            <option value="⭐ 2">⭐ 2</option>
+            <option value="⭐ 3">⭐ 3</option>
+            <option value="⭐ 4">⭐ 4</option>
+            <option value="⭐ 5">⭐ 5</option>
+          </select>
+
+          <button onclick="filtrarAvaliacoes()">Filtrar</button>
+          <button onclick="limparFiltro()">Limpar</button>
+        </div>
+      </div>
+
+      <div class="summary" id="resumo">
+        Carregando avaliações...
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Atendimento</th>
+            <th>Comida</th>
+            <th>Som</th>
+            <th>Comentário</th>
+          </tr>
+        </thead>
+
+        <tbody id="tabelaAvaliacoes"></tbody>
+      </table>
+
+      <p id="mensagemVazia" class="empty-message"></p>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script>
+let avaliacoes =
+  JSON.parse(localStorage.getItem("avaliacoes")) || [];
+
+function numeroNota(nota) {
+  return Number(String(nota).replace("⭐", "").trim());
+}
+
+function calcularMedia(campo) {
+  if (avaliacoes.length === 0) return 0;
+
+  let soma = 0;
+
+  avaliacoes.forEach(a => {
+    soma += numeroNota(a[campo]);
+  });
+
+  return soma / avaliacoes.length;
+}
+
+function atualizarResumo() {
+  const resumo = document.getElementById("resumo");
+
+  if (avaliacoes.length === 0) {
+    resumo.innerHTML = "Nenhuma avaliação registrada.";
+    return;
+  }
+
+  resumo.innerHTML = `
+    Total de avaliações: <strong>${avaliacoes.length}</strong> |
+    Média atendimento: <strong>${calcularMedia("atendimento").toFixed(1)}</strong> |
+    Média comida: <strong>${calcularMedia("comida").toFixed(1)}</strong> |
+    Média som: <strong>${calcularMedia("som").toFixed(1)}</strong>
+  `;
+}
+
+function renderAvaliacoes(lista) {
+  const tabela = document.getElementById("tabelaAvaliacoes");
+  const mensagem = document.getElementById("mensagemVazia");
+
+  tabela.innerHTML = "";
+
+  if (lista.length === 0) {
+    mensagem.innerText = "Nenhuma avaliação encontrada.";
+    return;
+  }
+
+  mensagem.innerText = "";
+
+  lista.forEach(a => {
+    tabela.innerHTML += `
+      <tr>
+        <td>${a.atendimento}</td>
+        <td>${a.comida}</td>
+        <td>${a.som}</td>
+        <td>${a.comentario || "Sem comentário"}</td>
+      </tr>
+    `;
+  });
+}
+
+function filtrarAvaliacoes() {
+  const tipo = document.getElementById("filtroTipo").value;
+  const nota = document.getElementById("filtroNota").value;
+
+  let resultado = avaliacoes;
+
+  if (tipo !== "todos") {
+    resultado = resultado.filter(a => a[tipo] === nota || nota === "todos");
+  } else if (nota !== "todos") {
+    resultado = resultado.filter(a =>
+      a.atendimento === nota ||
+      a.comida === nota ||
+      a.som === nota
+    );
+  }
+
+  renderAvaliacoes(resultado);
+}
+
+function limparFiltro() {
+  document.getElementById("filtroTipo").value = "todos";
+  document.getElementById("filtroNota").value = "todos";
+
+  renderAvaliacoes(avaliacoes);
+}
+
+atualizarResumo();
+renderAvaliacoes(avaliacoes);
+</script>
+
+</body>
+</html>

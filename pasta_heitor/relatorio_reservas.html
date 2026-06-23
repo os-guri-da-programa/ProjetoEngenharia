@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Relatório de Reservas</title>
+
+  <link rel="stylesheet" href="../pasta_fabiane/index.css">
+
+  <style>
+    .form-container {
+      background: white;
+      padding: 20px;
+      border-radius: 6px;
+      margin-bottom: 25px;
+      border: 1px solid #ddd;
+    }
+
+    .form-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .form-group input,
+    .form-group select {
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .summary {
+      background: white;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    .empty-message {
+      margin-top: 15px;
+      color: #777;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+  <aside class="sidebar">
+    <div class="logo">
+      <h1>CRUD</h1>
+    </div>
+
+    <nav class="menu">
+      <section class="menu-group">
+        <h3>Cadastros</h3>
+        <ul>
+          <li><a href="../pasta_mateus/cadastro_clientes.html">Cadastro de Clientes</a></li>
+          <li><a href="../pasta_mateus/cadastro_produtos.html">Cadastro de Produtos</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Estoque</h3>
+        <ul>
+          <li><a href="../pasta_davi/registro_de_entrada.html">Registro de Entrada</a></li>
+          <li><a href="../pasta_davi/relatorio.html">Consulta e Relatório</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Pedidos</h3>
+        <ul>
+          <li><a href="../pasta_pedro/registro_pedidos.html">Registro de Pedidos</a></li>
+          <li><a href="../pasta_heitor/consulta_de_pedidos.html">Consulta de Pedidos</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Vendas</h3>
+        <ul>
+          <li><a href="../pasta_enzo/registro_vendas.html">Registro de Vendas</a></li>
+          <li><a href="../pasta_enzo/relatorio_financeiro.html">Relatório de Vendas</a></li>
+        </ul>
+      </section>
+
+      <section class="menu-group">
+        <h3>Avaliações e Reservas</h3>
+        <ul>
+          <li><a href="../pasta_heitor/relatorio_avaliacoes.html">Relatório de Avaliações</a></li>
+          <li><a href="../pasta_heitor/relatorio_reservas.html">Relatório de Reservas</a></li>
+        </ul>
+      </section>
+    </nav>
+  </aside>
+
+  <main class="content">
+
+    <header class="content-header">
+      <h2>Relatório de Reservas</h2>
+      <div class="user-info">Usuário: Admin</div>
+    </header>
+
+    <section class="view-container">
+
+      <div class="form-container">
+        <div class="form-group">
+          <input type="text" id="buscaNome" placeholder="Buscar por nome ou telefone">
+
+          <select id="filtroTipo">
+            <option value="todos">Todos os tipos</option>
+            <option value="Mesa">Mesa</option>
+            <option value="Local para Evento">Local para Evento</option>
+          </select>
+
+          <input type="date" id="filtroData">
+
+          <button onclick="filtrarReservas()">Filtrar</button>
+          <button onclick="limparFiltro()">Limpar</button>
+        </div>
+      </div>
+
+      <div class="summary" id="resumo">
+        Carregando reservas...
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Nome</th>
+            <th>Telefone</th>
+            <th>Data</th>
+            <th>Observações</th>
+          </tr>
+        </thead>
+
+        <tbody id="tabelaReservas"></tbody>
+      </table>
+
+      <p id="mensagemVazia" class="empty-message"></p>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script>
+let reservas =
+  JSON.parse(localStorage.getItem("reservas")) || [];
+
+function formatarData(data) {
+  if (!data) return "Sem data";
+  return new Date(data + "T00:00:00").toLocaleDateString("pt-BR");
+}
+
+function atualizarResumo(lista = reservas) {
+  const resumo = document.getElementById("resumo");
+
+  const mesas = lista.filter(r => r.tipo === "Mesa").length;
+  const locais = lista.filter(r => r.tipo === "Local para Evento").length;
+
+  resumo.innerHTML = `
+    Total de reservas: <strong>${lista.length}</strong> |
+    Mesas: <strong>${mesas}</strong> |
+    Locais para evento: <strong>${locais}</strong>
+  `;
+}
+
+function renderReservas(lista) {
+  const tabela = document.getElementById("tabelaReservas");
+  const mensagem = document.getElementById("mensagemVazia");
+
+  tabela.innerHTML = "";
+
+  if (lista.length === 0) {
+    mensagem.innerText = "Nenhuma reserva encontrada.";
+    atualizarResumo([]);
+    return;
+  }
+
+  mensagem.innerText = "";
+
+  lista.forEach(r => {
+    tabela.innerHTML += `
+      <tr>
+        <td>${r.tipo}</td>
+        <td>${r.nome}</td>
+        <td>${r.telefone}</td>
+        <td>${formatarData(r.data)}</td>
+        <td>${r.observacoes || "Sem observações"}</td>
+      </tr>
+    `;
+  });
+
+  atualizarResumo(lista);
+}
+
+function filtrarReservas() {
+  const busca = document.getElementById("buscaNome").value.toLowerCase();
+  const tipo = document.getElementById("filtroTipo").value;
+  const data = document.getElementById("filtroData").value;
+
+  let resultado = reservas.filter(r => {
+    const matchBusca =
+      r.nome.toLowerCase().includes(busca) ||
+      r.telefone.toLowerCase().includes(busca);
+
+    const matchTipo =
+      tipo === "todos" || r.tipo === tipo;
+
+    const matchData =
+      !data || r.data === data;
+
+    return matchBusca && matchTipo && matchData;
+  });
+
+  renderReservas(resultado);
+}
+
+function limparFiltro() {
+  document.getElementById("buscaNome").value = "";
+  document.getElementById("filtroTipo").value = "todos";
+  document.getElementById("filtroData").value = "";
+
+  renderReservas(reservas);
+}
+
+renderReservas(reservas);
+</script>
+
+</body>
+</html>
