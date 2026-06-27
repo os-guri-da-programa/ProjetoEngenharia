@@ -87,51 +87,62 @@
 
 </div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
 <script>
+const cardapio = document.getElementById("cardapio");
 
-let produtos =
-  JSON.parse(localStorage.getItem("produtos")) || [];
+function mostrar_cardapio(produtos){
+  if(produtos.length === 0){
 
-const cardapio =
-  document.getElementById("cardapio");
-
-if(produtos.length === 0){
-
-  cardapio.innerHTML = `
-    <p>Nenhum produto cadastrado.</p>
-  `;
-
-}else{
-
-  produtos.forEach(produto => {
-
-    cardapio.innerHTML += `
-
-      <div class="produto-card">
-
-        <h3>${produto.nome}</h3>
-
-        <div class="tipo">
-          ${produto.tipoCusto}
-        </div>
-
-        <p>
-          Disponível:
-          ${produto.quantidade}
-        </p>
-
-        <div class="preco">
-          R$ ${Number(produto.venda).toFixed(2)}
-        </div>
-
-      </div>
-
+    cardapio.innerHTML = `
+      <p>Nenhum produto cadastrado.</p>
     `;
 
-  });
+  }else{
 
+    produtos.forEach(produto => {
+
+      cardapio.innerHTML += `
+
+        <div class="produto-card">
+
+          <h3>${produto.produto}</h3>
+
+          <div class="tipo">
+            ${String(produto.tipo_produto)}
+          </div>
+
+          <p>
+            Disponível:
+            ${produto.quantidade}
+          </p>
+
+          <div class="preco">
+            R$ ${produto.valor_venda}
+          </div>
+
+        </div>
+
+      `;
+
+    });
+
+  }
 }
 
+$.ajax({
+  url: '../pasta_pedro/api/select_produtos.php',
+  type: "GET",
+  dataType: "json",
+  success: function (produtos) {
+      console.log("Dados recebidos:", produtos);
+      mostrar_cardapio(produtos);
+  },
+  error: function (error) {
+      console.error("Erro ao obter dados:", error);
+  }
+})
 </script>
 
 </body>
