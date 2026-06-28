@@ -1,0 +1,27 @@
+<?php
+header("Content-Type: application/json");
+include 'mysql_connection.php';
+
+$method = $_SERVER['REQUEST_METHOD'];
+$input = json_decode(file_get_contents('php://input'), true);
+
+switch ($method) {
+    case 'GET':
+        handleGet($pdo);
+        break;
+    default:
+        echo json_encode(['message' => 'Invalid request method']);
+        break;
+}
+
+function handleGet($pdo) {
+    $sql =
+    "SELECT id, artista, DATE_FORMAT(data, '%d/%m/%Y') AS data, TIME_FORMAT(hora, '%H:%i') AS hora, local, preco_ingresso
+    FROM shows";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    echo json_encode($result);
+}
+
+?>

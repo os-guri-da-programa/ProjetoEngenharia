@@ -86,74 +86,57 @@
 
 </div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
 <script>
-
-const shows = [
-  {
-    artista: "Stray Kids",
-    data: "23/06/2026",
-    hora: "22:00",
-    local: "Palco Principal",
-    ingresso: 25
-  },
-  {
-    artista: "Banda dos Guri",
-    data: "15/06/2026",
-    hora: "22:00",
-    local: "Palco Principal",
-    ingresso: 25
-  },
-
-  {
-    artista: "Zvezda: Estornei o Chão",
-    data: "29/06/2026",
-    hora: "15:20",
-    local: "IFSC Câmpus Chapecó",
-    ingresso: 22.5
-  },
-
-  {
-    artista: "The Wibbas",
-    data: "29/06/2026",
-    hora: "21:00",
-    local: "Palco Principal",
-    ingresso: 30
-  }
-
-];
 
 const lista =
   document.getElementById("listaShows");
 
-shows.forEach(show => {
+function mostrar_shows(shows){
+  shows.forEach(show => {
 
-  lista.innerHTML += `
+    lista.innerHTML += `
 
-    <div class="show-card">
+      <div class="show-card">
 
-      <h3>${show.artista}</h3>
+        <h3>${show.artista}</h3>
 
-      <div class="show-info">
-        📅 ${show.data}
+        <div class="show-info">
+          📅 ${show.data}
+        </div>
+
+        <div class="show-info">
+          🕒 ${show.hora}
+        </div>
+
+        <div class="show-info">
+          📍 ${show.local}
+        </div>
+
+        <div class="ingresso">
+          Ingresso: R$ ${show.preco_ingresso}
+        </div>
+
       </div>
 
-      <div class="show-info">
-        🕒 ${show.hora}
-      </div>
+    `;
 
-      <div class="show-info">
-        📍 ${show.local}
-      </div>
+  });
+}
 
-      <div class="ingresso">
-        Ingresso: R$ ${show.ingresso.toFixed(2)}
-      </div>
-
-    </div>
-
-  `;
-
-});
+$.ajax({
+  url: '../pasta_pedro/api/select_shows.php',
+  type: "GET",
+  dataType: "json",
+  success: function (shows) {
+      console.log("Dados recebidos:", shows);
+      mostrar_shows(shows);
+  },
+  error: function (error) {
+      console.error("Erro ao obter dados:", error);
+  }
+})
 
 </script>
 
