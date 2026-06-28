@@ -165,7 +165,7 @@
 
           <div class="actions">
 
-            <button type="submit">
+            <button type="submit" id="botao_cadastrar_editar">
               Cadastrar
             </button>
 
@@ -208,36 +208,31 @@
 </div>
 
 <script src="mock_clientes.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <script>
 
-let clientes =
-  JSON.parse(localStorage.getItem("clientes"));
-
-if (!clientes) {
-
-  clientes = mockClientes;
-
-  localStorage.setItem(
-    "clientes",
-    JSON.stringify(clientes)
-  );
-
-}
-
 let editandoIndex = null;
+let editando_cliente = false;
+let url = '';
+let cliente_editado = {};
 
-function atualizarClientes() {
-
+function atualizar_clientes() {
   const lista =
     document.getElementById("listaClientes");
 
   const mensagem =
     document.getElementById("mensagemVazia");
 
-  lista.innerHTML = "";
+  $.ajax({
+    url: '../pasta_pedro/api/select_clientes.php',
+    type: "GET",
+    dataType: "json",
+    success: function (clientes) {
+        console.log("Dados recebidos:", clientes);
+        lista.innerHTML = "";
 
-  if (clientes.length === 0) {
+  if (clientes.length === 0) { 
 
     mensagem.innerText =
       "Nenhum cliente cadastrado.";
@@ -275,74 +270,110 @@ function atualizarClientes() {
     `;
 
   });
+    },
+    error: function (error) {
+        console.error("Erro ao obter dados:", error);
+    }
+  })
+
+  
 
 }
 
-document
-  .getElementById("formCliente")
-
-  .addEventListener("submit", function(e) {
+document.getElementById("formCliente").addEventListener("submit", function(e) {
 
     e.preventDefault();
+    let cliente_pre = {};
 
-    const cliente = {
+    if (editando_cliente) {
+      url = '../pasta_pedro/api/update_clientes.php';
+      cliente_pre = {
+        nome:
+          document.getElementById("nome").value,
 
-      nome:
-        document.getElementById("nome").value,
+        cpf:
+          document.getElementById("cpf").value,
 
-      cpf:
-        document.getElementById("cpf").value,
+        telefone:
+          document.getElementById("telefone").value,
 
-      telefone:
-        document.getElementById("telefone").value
+        id: cliente_editado.id
+      };
+      editando_cliente = false;
 
-    };
+      document.getElementById("botao_cadastrar_editar").innerText = "Cadastrar";
+    }
+    else {
+      url = '../pasta_pedro/api/insert_clientes.php';
 
+      cliente_pre = {
 
-    if (editandoIndex !== null) {
+        nome:
+          document.getElementById("nome").value,
 
-      clientes[editandoIndex] = cliente;
+        cpf:
+          document.getElementById("cpf").value,
 
-      editandoIndex = null;
+        telefone:
+          document.getElementById("telefone").value
 
-      alert("Cliente atualizado com sucesso!");
-
-    } else {
-
-      clientes.push(cliente);
-
-      alert("Cliente cadastrado com sucesso!");
-
+      };
     }
 
+    const cliente = cliente_pre;
+    console.log(cliente);
 
-    localStorage.setItem(
-      "clientes",
-      JSON.stringify(clientes)
-    );
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(cliente)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log("Operação realizada com sucesso:", data.message);
+            atualizar_clientes();
+        } else {
+            console.error("Erro de banco de dados:", data.message);
+        }
+    })
+    .catch(error => console.error("Erro de rede:", error));
 
     this.reset();
-
-    atualizarClientes();
 
 });
 
 function editarCliente(index) {
 
-  const cliente = clientes[index];
+  $.ajax({
+    url: '../pasta_pedro/api/select_clientes.php',
+    type: "GET",
+    dataType: "json",
+    success: function (clientes) {
+        console.log("Dados recebidos:", clientes);
 
-  document.getElementById("nome").value =
-    cliente.nome;
+        const cliente = clientes[index];
+        cliente_editado = cliente;
 
-  document.getElementById("cpf").value =
-    cliente.cpf;
+        document.getElementById("nome").value = cliente.nome;
 
-  document.getElementById("telefone").value =
-    cliente.telefone;
+        document.getElementById("cpf").value = cliente.cpf;
 
-  editandoIndex = index;
+        document.getElementById("telefone").value = cliente.telefone;
 
-  window.scrollTo(0, 0);
+        editandoIndex = index;
+        editando_cliente = true;
+
+        document.getElementById("botao_cadastrar_editar").innerText = "Editar";
+
+        window.scrollTo(0, 0);
+    },
+    error: function (error) {
+        console.error("Erro ao obter dados:", error);
+    }
+  })
 
 }
 
@@ -354,16 +385,44 @@ function excluirCliente(index) {
     )
   ) {
 
-    clientes.splice(index, 1);
+    $.ajax({
+      url: '../pasta_pedro/api/select_clientes.php',
+      type: "GET",
+      dataType: "json",
+      success: function (clientes) {
+          console.log("Dados recebidos:", clientes);
 
-    localStorage.setItem(
-      "clientes",
-      JSON.stringify(clientes)
-    );
+          const cliente = clientes[index];
 
-    atualizarClientes();
+          console.log(cliente.id);
 
-    alert("Cliente excluído com sucesso!");
+          fetch('../pasta_pedro/api/delete_clientes.php', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(cliente)
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  console.log("Cliente excluído com sucesso:", data.message);
+                  atualizar_clientes();
+              } else {
+                  console.error("Erro de banco de dados:", data.message);
+              }
+          })
+          .catch(error => console.error("Erro de rede:", error));
+
+
+          atualizar_clientes();
+
+          alert("Cliente excluído com sucesso!");
+      },
+      error: function (error) {
+          console.error("Erro ao obter dados:", error);
+      }
+    })
 
   }
 
@@ -371,15 +430,13 @@ function excluirCliente(index) {
 
 function limparFormulario() {
 
-  document
-    .getElementById("formCliente")
-    .reset();
+  document.getElementById("formCliente").reset();
 
   editandoIndex = null;
 
 }
 
-atualizarClientes();
+atualizar_clientes();
 
 </script>
 
